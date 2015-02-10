@@ -1,4 +1,3 @@
-
 public interface ReversiAlgorithm
 extends java.lang.Runnable
 The interface each reversi algorithm must implement. ReversiAlgorithm defines the interface between the game and the algorithm. It can be used e.g. as follows:
