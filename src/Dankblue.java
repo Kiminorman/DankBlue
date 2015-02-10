@@ -1,7 +1,7 @@
   import reversi.*;
   import java.util.Vector;
 
-  public class MyAlgorithm implements ReversiAlgorithm
+  public class Dankblue implements ReversiAlgorithm
   {
       // Constants
   private final static int DEPTH_LIMIT = 6; // Just an example value.
@@ -14,7 +14,7 @@
   int myIndex;
   Move selectedMove;
 
-  public MyAlgorithm() {} //the constructor
+  public Dankblue() {} //the constructor
   
   public void requestMove(GameController requester)
   {
@@ -30,7 +30,7 @@
       initialized = true;
   }
 
-  public String getName() { return "MyAlgorithm"; }
+  public String getName() { return "Dankblue"; }
 
   public void cleanup() {}
 
