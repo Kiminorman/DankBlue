@@ -8,3 +8,6 @@ call run.bat CheapBlue LousyBlue 1
 call run.bat LousyBlue CheapBlue 1
 call run.bat CheapBlue LousyBlue 10
 call run.bat LousyBlue CheapBlue 10
+
+COPY /Y Game_Report* ..\..\Reports
+DEL Game_Report*
