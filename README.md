@@ -8,4 +8,5 @@ Gitin käyttö komentoriviltä:
 4. git push
 Tästä puuttuu vielä muitten tekemien muutosten kopiointi.
 
+Näytetäänpä ELialle.
 Kannattaa käyttää eclipseä tähän projektiin.
