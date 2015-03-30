@@ -1,5 +1,4 @@
-Joo kurssin lopputyö,
-Ei oikein toimi ....
+Kurssin tekoäly lopputyö,
 
 Gitin käyttö komentoriviltä:
 1. Kirjottele muutokset
@@ -8,5 +7,7 @@ Gitin käyttö komentoriviltä:
 4. git push
 Tästä puuttuu vielä muitten tekemien muutosten kopiointi.
 
-Näytetäänpä ELialle.
-Kannattaa käyttää eclipseä tähän projektiin.
+Run käynnistää graafisen pelin.
+Run_cmd ottaa komentoriviltä argumentit: tekoäly1 tekoäly2 vuoron_pituus
+Run_games_cmd pelaa viralliset pelit käyttäen run_cmd:tä hyväksi. Tiedostoon syötettävä tekoälyt.
+move_report siirtää raportit toiseen kansioon.

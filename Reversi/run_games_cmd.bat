@@ -10,11 +10,13 @@ REM version of the Reversi game framework. See the following example lines for u
 
 @echo ---------------------------------------------------------------------------
 
-call run.bat CheapBlue LousyBlue 1
-call run.bat LousyBlue CheapBlue 1
+call run_cmd.bat CheapBlue LousyBlue 1
 
-call run.bat CheapBlue LousyBlue 10
-call run.bat LousyBlue CheapBlue 10
+call run_cmd.bat LousyBlue CheapBlue 1
+
+call run_cmd.bat CheapBlue LousyBlue 10
+
+call run_cmd.bat LousyBlue CheapBlue 10
 
 
 
