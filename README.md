@@ -1,21 +1,20 @@
 Kurssin tekoäly lopputyö,
 
 Gitin käyttö komentoriviltä:
-1. Kirjottele muutokset
-2. git add -A
-3. git commit -m "viestisi mitä muutit"
-4. git push
-Tästä puuttuu vielä muitten tekemien muutosten kopiointi.
-
-Dank
+Aluksi:
+1. git fetch "name" #namen tilalle  sitte se henkilö kenen repositorystä hakee muutokset
+2. git merge "name"/master
+# Ylempi kahesti, (sama molemmille toisille ryhmäläisille)
+3. Kirjottele muutokset
+4. git add -A
+5. git commit -m "viestisi mitä muutit"
+6. git push
 
 Pertulle:
 git remote add kimi https://github.com/Kiminorman/DankBlue
 git remote -v
 
-Toisten muutosten kopiointi:
-git fetch kimi
-git merge kimi/master
+
 
 Run käynnistää graafisen pelin.
 Run_cmd ottaa komentoriviltä argumentit: tekoäly1 tekoäly2 vuoron_pituus
