@@ -6,7 +6,7 @@ Aluksi:
 2. git merge "name"/master
 # Ylempi kahesti, (sama molemmille toisille ryhmäläisille)
 3. Kirjottele muutokset
-4. git add -A
+4. git add -A # tai -A korvaa tiedostolla, jota muutti
 5. git commit -m "viestisi mitä muutit"
 6. git push
 
