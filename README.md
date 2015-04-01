@@ -1,10 +1,9 @@
-Kurssin tekoäly lopputyö,
+# Kurssin tekoäly lopputyö,
 
 Gitin käyttö komentoriviltä:
 Aluksi:
 1. git fetch "name" #namen tilalle  sitte se henkilö kenen repositorystä hakee muutokset
-2. git merge "name"/master
-# Ylempi kahesti, (sama molemmille toisille ryhmäläisille)
+2. git merge "name"/master # Kaksi ensimmäistä kahesti, (sama molemmille toisille ryhmäläisille)
 3. Kirjottele muutokset
 4. git add -A # tai -A korvaa tiedostolla, jota muutti
 5. git commit -m "viestisi mitä muutit"
@@ -13,7 +12,6 @@ Aluksi:
 Pertulle:
 git remote add kimi https://github.com/Kiminorman/DankBlue
 git remote -v
-
 
 
 Run käynnistää graafisen pelin.
