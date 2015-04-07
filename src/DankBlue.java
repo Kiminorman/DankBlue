@@ -1,5 +1,6 @@
   import reversi.*;
-  import java.util.Vector;
+
+import java.util.Vector;
 
   public class DankBlue implements ReversiAlgorithm
   {
@@ -32,7 +33,7 @@
 
   public String getName() { return "Dankblue"; }
 
-  public void cleanup() {}
+  public void cleanup() {} //This will be called after game.
 
   public void run()
   {
@@ -59,6 +60,8 @@
       }
   }
   
+  
+  
   Move searchToDepth(int depth)
   {
       // - Create the tree of depth d (breadth first, depth first, beam search, alpha beta pruning, ...)
@@ -72,12 +75,50 @@
 
       Move optimalMove;
       Vector moves = initialState.getPossibleMoves(myIndex);
-   
+      Node root = new Node(initialState, null); //create root node
+      Vector nodes_list = new Vector();
+      
+      nodes_list.add(root);
+      // Create child nodes for tree to given depth
+      createTree(1, depth, nodes_list, myIndex);
+      
+      root.print();
+      
       if (moves.size() > 0)
           optimalMove = (Move)moves.elementAt(0); // Any movement that just happens to be first.
-          else
+      	  else
               optimalMove = null;
           
           return optimalMove;
       }
+  
+  
+  void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
+  {
+	  /*if (depth == depth_lim)
+		  return;*/
+	  int i = 0;
+	  Vector children = new Vector();
+	  Node node;
+	  
+	  while (!nodes.isEmpty()) {
+		  node = (Node)nodes.elementAt(0);
+		  Vector moves = node.getState().getPossibleMoves(pl_index);
+	      for (i = 0; i < moves.size(); i = i + 1) {
+	    	  Move game_move = (Move)moves.elementAt(i);
+	    	  GameState new_state = node.getState().getNewInstance(game_move);
+	    	  Node child = new Node(new_state, game_move);
+	    	  node.addChild(child);
+	    	  children.add(child);
+	      }
+	      nodes.removeElementAt(0);
+	  }
+      
+      if (depth < depth_lim)
+    	  pl_index++;
+      	  pl_index = pl_index % 2;
+    	  createTree(depth + 1, depth_lim, children, pl_index);
+    	  return;
+   	}
+  
   }
