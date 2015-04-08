@@ -1,5 +1,7 @@
   import reversi.*;
-  import java.util.Vector;
+
+import java.util.Stack;
+import java.util.Vector;
 
   public class DankBlue implements ReversiAlgorithm
   {
@@ -76,17 +78,14 @@
       Vector moves = initialState.getPossibleMoves(myIndex);
       Node root = new Node(initialState, null); //create root node
       Vector nodes_list = new Vector();
-      Vector jtn = new Vector();
-      Node jef;
       
       nodes_list.add(root);
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
-      root.print();
-      /*jtn = root.getChildren();
-      jef = (Node)jtn.elementAt(0);
-      jef.print();*/
+      
+      //root.print();
+      printTree(root, 0); // tulostetaan puu
       
       if (moves.size() > 0)
           optimalMove = (Move)moves.elementAt(0); // Any movement that just happens to be first.
@@ -96,7 +95,34 @@
           return optimalMove;
       }
   
+  void printTree(Node noodi, int dep) // funktiolla on tarkoitus tutkia toimiiko puunrakennus
+  {
+	  System.out.println("Dep" + dep);
+	  Vector childit = noodi.getChildren();
+	  System.out.print("Children:" + childit + "\n");
+	  String text = String.valueOf(noodi.getScore());
+	  text = "        ".substring(0, dep) + text;
+	  System.out.println(text);
+	  
+	  int childCount = childit.size();
+	  System.out.println(childCount);
+	  if (childCount == 0) {
+		  dep--;
+		  System.out.println("Lehti");
+		  return;
+		  // leaf node, we're done
+	  } else {
+		  for (int i = 0; i < childCount; i++) {
+			  System.out.println("Homma kuse");
+			  Node child = (Node) childit.elementAt(i); // Tsekkattava onko tolla noodilla enää lapsia.
+			  /*System.out.print(child);
+			  child.print();*/
+			  printTree(child, dep + 1);
+		  }
+	  }
+  }
   
+
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
   {
 	  int i = 0;
@@ -106,22 +132,22 @@
 	  while (!nodes.isEmpty()) {
 		  node = (Node)nodes.elementAt(0);
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
-	      for (i = 0; i < moves.size(); i = i + 1) {
-	    	  Move game_move = (Move)moves.elementAt(i);
+	      for (i = 0; i < moves.size(); i++) {
+	    	  Move game_move = (Move) moves.elementAt(i);
 	    	  GameState new_state = node.getState().getNewInstance(game_move);
 	    	  Node child = new Node(new_state, game_move);
 	    	  node.addChild(child);
 	    	  children.add(child);
 	      }
 	      nodes.removeElementAt(0);
-	      node.print();
-	      System.out.println(depth++);
+	      /*node.print();
+	      System.out.println(depth++);*/
 	  }
       
       if (depth < depth_lim) {
     	  pl_index++;
       	  pl_index = pl_index % 2;
-    	  createTree(depth++, depth_lim, children, pl_index);
+    	  createTree(depth + 1, depth_lim, children, pl_index);
     	  return;
        }
    	}
