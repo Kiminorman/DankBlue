@@ -5,7 +5,7 @@ import java.util.Vector;
   public class DankBlue implements ReversiAlgorithm
   {
       // Constants
-  private final static int DEPTH_LIMIT = 6; // Just an example value.
+  private final static int DEPTH_LIMIT = 4; // Just an example value.
 
   // Variables
   boolean initialized;
@@ -114,11 +114,13 @@ import java.util.Vector;
 	      nodes.removeElementAt(0);
 	  }
       
-      if (depth < depth_lim)
+      if (depth < depth_lim){
     	  pl_index++;
       	  pl_index = pl_index % 2;
-    	  createTree(depth + 1, depth_lim, children, pl_index);
+      	  System.out.println(depth++);
+    	  createTree(depth++, depth_lim, children, pl_index);
     	  return;
+      }
    	}
   
   }
