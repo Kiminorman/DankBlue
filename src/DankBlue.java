@@ -112,13 +112,13 @@ import java.util.Vector;
 	      nodes.removeElementAt(0);
 	  }
       
-      if (depth < depth_lim){
+      if (depth < depth_lim) {
     	  pl_index++;
       	  pl_index = pl_index % 2;
       	  //System.out.println(depth++);
     	  createTree(depth++, depth_lim, children, pl_index);
     	  return;
-      }
+       }
    	}
   
   }
