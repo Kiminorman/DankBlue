@@ -117,7 +117,7 @@ import java.util.Vector;
       if (depth < depth_lim){
     	  pl_index++;
       	  pl_index = pl_index % 2;
-      	  System.out.println(depth++);
+      	  //System.out.println(depth++);
     	  createTree(depth++, depth_lim, children, pl_index);
     	  return;
       }
