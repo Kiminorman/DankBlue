@@ -95,8 +95,8 @@ import java.util.Vector;
   
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
   {
-	  /*if (depth == depth_lim)
-		  return;*/
+	  if (depth == depth_lim)
+		  return;
 	  int i = 0;
 	  Vector children = new Vector();
 	  Node node;
@@ -117,7 +117,7 @@ import java.util.Vector;
       if (depth < depth_lim)
     	  pl_index++;
       	  pl_index = pl_index % 2;
-    	  createTree(depth + 1, depth_lim, children, pl_index);
+    	  createTree(depth++, depth_lim, children, pl_index);
     	  return;
    	}
   
