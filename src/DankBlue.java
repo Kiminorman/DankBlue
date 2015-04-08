@@ -96,7 +96,7 @@ import java.util.Vector;
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
   {
 	  int i = 0;
-	  Vector children = new Vector();
+	  Vector children = new vector();
 	  Node node;
 	  
 	  while (!nodes.isEmpty()) {
