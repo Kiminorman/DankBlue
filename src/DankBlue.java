@@ -1,6 +1,5 @@
   import reversi.*;
-
-import java.util.Vector;
+  import java.util.Vector;
 
   public class DankBlue implements ReversiAlgorithm
   {
@@ -77,12 +76,17 @@ import java.util.Vector;
       Vector moves = initialState.getPossibleMoves(myIndex);
       Node root = new Node(initialState, null); //create root node
       Vector nodes_list = new Vector();
+      Vector jtn = new Vector();
+      Node jef;
       
       nodes_list.add(root);
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
       root.print();
+      /*jtn = root.getChildren();
+      jef = (Node)jtn.elementAt(0);
+      jef.print();*/
       
       if (moves.size() > 0)
           optimalMove = (Move)moves.elementAt(0); // Any movement that just happens to be first.
@@ -110,6 +114,8 @@ import java.util.Vector;
 	    	  children.add(child);
 	      }
 	      nodes.removeElementAt(0);
+	      node.print();
+	      System.out.println(depth++);
 	  }
       
       if (depth < depth_lim) {
