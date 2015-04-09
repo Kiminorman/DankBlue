@@ -74,15 +74,17 @@
 
       Move optimalMove;
       Vector moves = initialState.getPossibleMoves(myIndex);
-      Node root = new Node(initialState, null); //create root node
+      Move rootmove = new Move(4,4,0);
+      Node root = new Node(initialState, rootmove); //create root node
       Vector nodes_list = new Vector();
       
       nodes_list.add(root);
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
-      /*printTree(root, 0); // tulostetaan puu*/
-
+      if (depth == 5){
+    	  printTree(root, 0, 1); // tulostetaan puu
+      }
       
       if (moves.size() > 0)
           optimalMove = (Move)moves.elementAt(0); // Any movement that just happens to be first.
@@ -92,29 +94,33 @@
           return optimalMove;
       }
   
-  void printTree(Node noodi, int dep) // funktiolla on tarkoitus tutkia toimiiko puunrakennus
+  void printTree(Node noodi, int dep, int mode) // This function will print the tree
   {
-	  System.out.println("Dep" + dep);
-	  Vector childit = noodi.getChildren();
-	  System.out.print("Children:" + childit + "\n");
-	  String text = String.valueOf(noodi.getScore());
-	  text = "        ".substring(0, dep) + text;
-	  System.out.println(text);
+	  String field;
+	  String move_string;
+	  Vector childit = noodi.getChildren(); // Take children
+	  int childCount = childit.size();		// Calc children
 	  
-	  int childCount = childit.size();
-	  System.out.println(childCount);
+	  // Print the wanted info
+	  if (mode == 0){
+		  String text = String.valueOf(noodi.getScore());
+		  text = "        ".substring(0, dep) + text;
+		  System.out.println(text); // Print the tree
+	  } else {
+		  System.out.println("Syvyys: " + dep);
+		  move_string = noodi.getMove().toString();
+		  System.out.println(move_string);
+		  field = noodi.getState().toString();
+		  System.out.println(field);
+	  }
+	  
 	  if (childCount == 0) {
-		  dep--;
-		  System.out.println("Lehti");
+		  dep--; // leaf node
 		  return;
-		  // leaf node, we're done
 	  } else {
 		  for (int i = 0; i < childCount; i++) {
-			  System.out.println("Homma kuse");
-			  Node child = (Node) childit.elementAt(i); // Tsekkattava onko tolla noodilla enää lapsia.
-			  /*System.out.print(child);
-			  child.print();*/
-			  printTree(child, dep + 1);
+			  Node child = (Node) childit.elementAt(i); 
+			  printTree(child, dep + 1, mode); // Has to check if more Node child has more childs
 		  }
 	  }
   }
@@ -123,8 +129,6 @@
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
   {
 	  int i = 0;
-	  String testi;
-	  String tilanne;
 	  int counter = 0;
 	  Vector children = new Vector();
 	  Node node;
@@ -139,24 +143,15 @@
 	    	  Node child = new Node(new_state, game_move);
 	    	  if(!children.contains(child)) {
 	    		  node.addChild(child);
-	    	  		children.add(child);
-	    	  		}
+	    	  	  children.add(child);
+	    	  }
 	      }
-	      System.out.println("counter:" + counter);
+	      //System.out.println("counter:" + counter);
 	      nodes.removeElementAt(0);
 	  }
       if (depth < depth_lim) {
     	  pl_index++;
       	  pl_index = pl_index % 2;
-      	  System.out.println("asdffdgaeffeage\n");
-      	  for (i = 0; i < children.size(); i++) {
-      		  	Node child = (Node)children.elementAt(i);
-   	  			tilanne = child.getState().toString();
-   	  			testi = child.getMove().toString();
-   	  			System.out.println(testi);
-   	  			System.out.println(tilanne);
-   	  			System.out.println(depth);
-   	  			}
     	  createTree(depth + 1, depth_lim, children, pl_index);
     	  return;
       }
