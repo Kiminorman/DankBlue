@@ -146,7 +146,7 @@
 	    	  if(!children.contains(child)) {
 	    		  node.addChild(child);
 	    	  	  children.add(child);
-	      }
+	    	  }
 	      //System.out.println("counter:" + counter);
 	      nodes.removeElementAt(0);
 	  }
@@ -157,5 +157,5 @@
     	  return;
       }
    	}
-  
+  }
   }
