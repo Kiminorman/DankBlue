@@ -81,7 +81,7 @@
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
-      printTree(root, 0); // tulostetaan puu
+      /*printTree(root, 0); // tulostetaan puu*/
 
       
       if (moves.size() > 0)
@@ -133,30 +133,33 @@
 		  node = (Node)nodes.elementAt(0);
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
 	      for (i = 0; i < moves.size(); i++) {
+	    	  counter++;
 	    	  Move game_move = (Move) moves.elementAt(i);
 	    	  GameState new_state = node.getState().getNewInstance(game_move);
 	    	  Node child = new Node(new_state, game_move);
-	    	  node.addChild(child);
-	    	  children.add(child);
-	      }
-	      for (i = 0; i < children.size(); i++) {
-	    	  counter++;
-	    	  Node child = (Node)children.elementAt(i);
-	    	  tilanne = child.getState().toString();
-	    	  testi = child.getMove().toString();
-	    	  System.out.println(testi);
-	    	  System.out.println(tilanne);
+	    	  if(!children.contains(child)) {
+	    		  node.addChild(child);
+	    	  		children.add(child);
+	    	  		}
 	      }
 	      System.out.println("counter:" + counter);
 	      nodes.removeElementAt(0);
 	  }
-      
       if (depth < depth_lim) {
     	  pl_index++;
       	  pl_index = pl_index % 2;
+      	  System.out.println("asdffdgaeffeage\n");
+      	  for (i = 0; i < children.size(); i++) {
+      		  	Node child = (Node)children.elementAt(i);
+   	  			tilanne = child.getState().toString();
+   	  			testi = child.getMove().toString();
+   	  			System.out.println(testi);
+   	  			System.out.println(tilanne);
+   	  			System.out.println(depth);
+   	  			}
     	  createTree(depth + 1, depth_lim, children, pl_index);
     	  return;
-       }
+      }
    	}
   
   }
