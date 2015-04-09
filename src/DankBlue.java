@@ -129,16 +129,18 @@
 	  Vector children = new Vector();
 	  Node node;
 	  
+	  
+	  System.out.println("vuoro:" + pl_index);
 	  while (!nodes.isEmpty()) {
 		  node = (Node)nodes.elementAt(0);
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
+		  counter++;
 	      for (i = 0; i < moves.size(); i++) {
-	    	  counter++;
 	    	  Move game_move = (Move) moves.elementAt(i);
 	    	  GameState new_state = node.getState().getNewInstance(game_move);
 	    	  Node child = new Node(new_state, game_move);
+	    	  node.addChild(child);
 	    	  if(!children.contains(child)) {
-	    		  node.addChild(child);
 	    	  		children.add(child);
 	    	  		}
 	      }
