@@ -1,5 +1,11 @@
+Possible moves:
+initialState.getPossibleMoves(myIndex);
 [(0,2,x), (3,1,x), (4,1,x), (5,3,x), (6,3,x)]
+
+Selected move:
 (0,2,x)
+
+Gamefield:
 o       
  o      
  ooooo  
@@ -8,3 +14,5 @@ o
    xox  
    xx   
    x    
+
+And after comes a 
