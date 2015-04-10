@@ -10,6 +10,7 @@ Aluksi:
 6. git push
 
 muutos
+niin
 
 Run k‰ynnist‰‰ graafisen pelin.
 Run_cmd ottaa komentorivilt‰ argumentit: teko‰ly1 teko‰ly2 vuoron_pituus
