@@ -1,5 +1,6 @@
   import reversi.*;
-  import java.util.Vector;
+
+import java.util.Vector;
 
   public class DankBlue implements ReversiAlgorithm
   {
@@ -74,16 +75,18 @@
 
       Move optimalMove;
       Vector moves = initialState.getPossibleMoves(myIndex);
-      Move rootmove = new Move(4,4,0);
-      Node root = new Node(initialState, rootmove); //create root node
-      Vector nodes_list = new Vector();
       
+      //create root node
+      Move rootmove = new Move(4,4,0);
+      Node root = new Node(initialState, rootmove);
+      Vector nodes_list = new Vector();
       nodes_list.add(root);
+      
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
       if (depth == 6){
-    	  printTree(root, 0, 1); // tulostetaan puu
+    	  printTree(root, 0, 1); // Print tree to check something
       }
       
       if (moves.size() > 0)
@@ -99,7 +102,7 @@
 	  String field;
 	  String move_string;
 	  Vector childit = noodi.getChildren(); // Take children
-	  int childCount = childit.size();		// Calc children
+	  int childCount = childit.size();		// Calc number of children
 	  
 	  // Print the wanted info
 	  if (mode == 0){
@@ -134,21 +137,27 @@
 	  Vector children = new Vector();
 	  Node node;
 	  
-	  
 	  System.out.println("vuoro:" + pl_index);
 	  while (!nodes.isEmpty()) {
 		  node = (Node)nodes.elementAt(0);
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
 		  counter++;
-	      for (i = 0; i < moves.size(); i++) {
-	    	  Move game_move = (Move) moves.elementAt(i);
-	    	  GameState new_state = node.getState().getNewInstance(game_move);
-	    	  Node child = new Node(new_state, game_move);
-	    	  if(!children.contains(child)) {
-	    		  node.addChild(child);
-	    	  	  children.add(child);
-	    	  }
-	      }
+		  if ((depth == depth_lim) || (moves.size() == 0)) {
+			  // Now we are at leaf node
+			  //here comes the scoring
+			  double score = calc_scores(node);
+			  node.setScore(score);
+		  } else {
+		      for (i = 0; i < moves.size(); i++) {
+		    	  Move game_move = (Move) moves.elementAt(i);
+		    	  GameState new_state = node.getState().getNewInstance(game_move);
+		    	  Node child = new Node(new_state, game_move);
+		    	  if (!children.contains(child)) {
+		    		  node.addChild(child);
+		    	  	  children.add(child);
+		    	  }
+		      }
+		  }
 	      //System.out.println("counter:" + counter);
 	      nodes.removeElementAt(0);
 	  }
@@ -159,4 +168,12 @@
     	  return;
       }
    	}
+
+private double calc_scores(Node node) {
+	// Calculates score for a given node
+	int score = 0;
+	//tänne perttu koodis
+	
+	return score;
+}
   }
