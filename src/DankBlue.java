@@ -72,9 +72,20 @@
       // - Return the move in the optimal child of the root node
       // - Don't forget the time constraint! -> Stop the algorithm when variable "running" becomes "false"
       //   or when you have reached the maximum search depth.
-
+	  
+	  int i = 0;
+	  Node parent;
+	  Node optimalNode;
       Move optimalMove;
+      Vector childparent = new Vector();
       Vector moves = initialState.getPossibleMoves(myIndex);
+      for (i = 0; i < moves.size(); i++) {
+    	  Move move = (Move) moves.elementAt(i);
+    	  if (!initialState.isPossibleMove(move.getX(), move.getY(), myIndex)) {
+    		  moves.remove(move);
+    		  i--;
+    	  }
+      }
       
       //create root node
       Move rootmove = new Move(4,4,0);
@@ -84,16 +95,33 @@
       
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
+      //System.out.println("MyIndex: " + myIndex);
       
-      if (depth == 6){
+      // Propagate score
+      childparent = propagate_score(root, childparent);
+      for (i = 0; i < childparent.size(); i++) {
+    	  parent = (Node) childparent.elementAt(i);
+    	  parent.propagateScore(true);
+      }
+      
+      // Print tree
+      if (depth == 3){
     	  printTree(root, 0, 0); // Print tree to check something
       }
       
-      if (moves.size() > 0)
-          optimalMove = (Move)moves.elementAt(0); // Any movement that just happens to be first.
-      	  else
-              optimalMove = null;
+      // Select move
+      if (moves.size() > 0) {
+    	  optimalNode = root.getOptimalChild();
+          optimalMove = optimalNode.getMove(); // Any movement that just happens to be first.
           
+          //print debug info
+          System.out.println(moves);
+          System.out.println(optimalMove);
+          String field = root.getState().toString();
+		  System.out.println(field);
+      } else {
+              optimalMove = null;
+      }
           return optimalMove;
       }
   
@@ -126,6 +154,28 @@
 			  printTree(child, dep + 1, mode); // Has to check if more Node child has more childs
 		  }
 	  }
+  }
+  
+  Vector propagate_score(Node noodi, Vector childparent) // This function will propagate score
+  {
+	  Vector childit = noodi.getChildren(); // Take children
+	  int childCount = childit.size();		// Calc number of children
+	  Node parent = new Node();
+	  
+	  if (childCount == 0) {
+		  // leaf node
+		  parent = noodi.getParent();
+		  if (!childparent.contains(parent)) {
+			  childparent.add(parent);
+		  }
+		  return childparent;
+	  } else {
+		  for (int i = 0; i < childCount; i++) {
+			  Node child = (Node) childit.elementAt(i); 
+			  childparent = propagate_score(child, childparent); // Has to check if more Node child has more childs
+		  }
+	  }
+	  return childparent;
   }
   
 
