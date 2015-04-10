@@ -46,7 +46,7 @@
 
       while (running && currentDepth < DEPTH_LIMIT)
       {
-          Move newMove = searchToDepth(currentDepth++);
+          Move newMove = searchToDepth(++currentDepth);
           
           // Check that there's a new move available.
           if (newMove != null)
@@ -82,7 +82,7 @@
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
-      if (depth == 2){
+      if (depth == 6){
     	  printTree(root, 0, 1); // tulostetaan puu
       }
       
@@ -128,6 +128,7 @@
 
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
   {
+	  // Makes tree with breadth first search to depth depth_lim
 	  int i = 0;
 	  int counter = 0;
 	  Vector children = new Vector();
