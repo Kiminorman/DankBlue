@@ -82,7 +82,7 @@
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
-      if (depth == 5){
+      if (depth == 2){
     	  printTree(root, 0, 1); // tulostetaan puu
       }
       
