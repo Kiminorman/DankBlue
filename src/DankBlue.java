@@ -1,6 +1,6 @@
   import reversi.*;
-
-import java.util.Vector;
+  import java.util.Vector;
+  import java.util.Random;
 
   public class DankBlue implements ReversiAlgorithm
   {
@@ -86,7 +86,7 @@ import java.util.Vector;
       createTree(1, depth, nodes_list, myIndex);
       
       if (depth == 6){
-    	  printTree(root, 0, 1); // Print tree to check something
+    	  printTree(root, 0, 0); // Print tree to check something
       }
       
       if (moves.size() > 0)
@@ -171,8 +171,12 @@ import java.util.Vector;
 
 private double calc_scores(Node node) {
 	// Calculates score for a given node
-	int score = 0;
-	//tänne perttu koodis
+	
+	double score = 0;
+	Random rnd = new Random();
+	
+	score = rnd.nextDouble();
+	score = score * 100;
 	
 	return score;
 }
