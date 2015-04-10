@@ -9,9 +9,6 @@ Aluksi:
 5. git commit -m "viestisi mitä muutit"
 6. git push
 
-muutos
-niin
-
 Run käynnistää graafisen pelin.
 Run_cmd ottaa komentoriviltä argumentit: tekoäly1 tekoäly2 vuoron_pituus
 Run_games_cmd pelaa viralliset pelit käyttäen run_cmd:tä hyväksi. Tiedostoon syötettävä tekoälyt.
