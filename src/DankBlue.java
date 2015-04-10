@@ -46,7 +46,7 @@
 
       while (running && currentDepth < DEPTH_LIMIT)
       {
-          Move newMove = searchToDepth(currentDepth++);
+          Move newMove = searchToDepth(++currentDepth);
           
           // Check that there's a new move available.
           if (newMove != null)
@@ -82,7 +82,7 @@
       // Create child nodes for tree to given depth
       createTree(1, depth, nodes_list, myIndex);
       
-      if (depth == 5){
+      if (depth == 6){
     	  printTree(root, 0, 1); // tulostetaan puu
       }
       
