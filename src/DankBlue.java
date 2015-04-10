@@ -128,6 +128,7 @@
 
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
   {
+	  // Makes tree with breadth first search to depth depth_lim
 	  int i = 0;
 	  int counter = 0;
 	  Vector children = new Vector();
