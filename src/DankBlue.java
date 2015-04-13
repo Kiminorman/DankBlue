@@ -5,7 +5,7 @@
   public class DankBlue implements ReversiAlgorithm
   {
       // Constants
-  private final static int DEPTH_LIMIT = 6; // Just an example value.
+  private final static int DEPTH_LIMIT = 5; // Just an example value.
 
   // Variables
   boolean initialized;
@@ -14,6 +14,16 @@
   GameState initialState;
   int myIndex;
   Move selectedMove;
+  int[][] gameboard = new int[][]{
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0},
+		  { 0, 0, 0, 0, 0, 0, 0, 0}
+  };
 
   public DankBlue() {} //the constructor
   
@@ -43,8 +53,8 @@
       running = true;
       selectedMove = null;
 
-      int currentDepth = 1;
-
+      int currentDepth = 1; 
+      
       while (running && currentDepth < DEPTH_LIMIT)
       {
           Move newMove = searchToDepth(++currentDepth);
@@ -221,10 +231,16 @@ private double calc_scores(Node node) {
 	// Calculates score for a given node
 	
 	double score = 0;
-	Random rnd = new Random();
+	if((node.getMove().getX() == 0 || node.getMove().getX() == 7) &&
+	   (node.getMove().getY() == 0 || node.getMove().getY() == 7)) {
+		score = 100000000000.0;
+	}
+	else {
+		Random rnd = new Random();
 	
-	score = rnd.nextDouble();
-	score = score * 100;
+		score = rnd.nextDouble();
+		score = score * 100;
+	}
 	
 	return score;
 }
