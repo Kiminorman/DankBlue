@@ -98,7 +98,7 @@
       //System.out.println("MyIndex: " + myIndex);
       
       // Propagate score
-      childparent = propagate_score(root, childparent);
+      propagate_score(root, childparent);
       for (i = 0; i < childparent.size(); i++) {
     	  parent = (Node) childparent.elementAt(i);
     	  parent.propagateScore(true);
@@ -156,7 +156,7 @@
 	  }
   }
   
-  Vector propagate_score(Node noodi, Vector childparent) // This function will propagate score
+  void propagate_score(Node noodi, Vector childparent) // This function will propagate score
   {
 	  Vector childit = noodi.getChildren(); // Take children
 	  int childCount = childit.size();		// Calc number of children
@@ -168,14 +168,13 @@
 		  if (!childparent.contains(parent)) {
 			  childparent.add(parent);
 		  }
-		  return childparent;
+		  return;
 	  } else {
 		  for (int i = 0; i < childCount; i++) {
 			  Node child = (Node) childit.elementAt(i); 
-			  childparent = propagate_score(child, childparent); // Has to check if more Node child has more childs
+			  propagate_score(child, childparent); // Has to check if more Node child has more childs
 		  }
 	  }
-	  return childparent;
   }
   
 
