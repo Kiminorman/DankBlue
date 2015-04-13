@@ -105,20 +105,20 @@
       }
       
       // Print tree
-      if (depth == 3){
+      /*if (depth == 3){
     	  printTree(root, 0, 0); // Print tree to check something
-      }
+      }*/
       
       // Select move
       if (moves.size() > 0) {
     	  optimalNode = root.getOptimalChild();
           optimalMove = optimalNode.getMove(); // Any movement that just happens to be first.
           
-          //print debug info
+          /*//print debug info
           System.out.println(moves);
           System.out.println(optimalMove);
           String field = root.getState().toString();
-		  System.out.println(field);
+		  System.out.println(field);*/
       } else {
               optimalMove = null;
       }
@@ -187,7 +187,7 @@
 	  Vector children = new Vector();
 	  Node node;
 	  
-	  System.out.println("vuoro:" + pl_index);
+	  /*System.out.println("vuoro:" + pl_index);*/
 	  while (!nodes.isEmpty()) {
 		  node = (Node)nodes.elementAt(0);
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
@@ -208,7 +208,6 @@
 		    	  }
 		      }
 		  }
-	      //System.out.println("counter:" + counter);
 	      nodes.removeElementAt(0);
 	  }
       if (depth < depth_lim) {
