@@ -5,7 +5,7 @@ import java.util.Random;
 public class DankBlue implements ReversiAlgorithm
 {
       // Constants
-  private final static int DEPTH_LIMIT = 5; // Just an example value.
+  private final static int DEPTH_LIMIT = 4; // Just an example value.
 
   // Variables
   boolean initialized;
@@ -111,7 +111,7 @@ public class DankBlue implements ReversiAlgorithm
       }
       for (i = 0; i < childparent.size(); i++) {
     	  parent = (Node) childparent.elementAt(i);
-    	  parent.propagateScore(maximize);
+    	  parent.propagateScore();
       }
       //long endTime   = System.currentTimeMillis();
       //long totalTime = endTime - startTime;
@@ -246,7 +246,7 @@ public class DankBlue implements ReversiAlgorithm
 	  } else {
 		  for (int i = 0; i < childCount; i++) {
 			  Node child = (Node) childit.elementAt(i); 
-			  printTree(child, dep + 1, mode); // Has to check if more Node child has more childs
+			  printTree(child, dep + 1, mode); // Has to check if Node child has more children
 		  }
 	  }
   }
