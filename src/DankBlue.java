@@ -222,9 +222,8 @@ public class DankBlue implements ReversiAlgorithm
 	opp_marks = field.getMarkCount(myIndex ^ 1);
 	if (my_marks + opp_marks < 20) {
 		// mobility
-		score += (opp_marks - my_marks) * 5;
-	} else if (my_marks + opp_marks < 55){
-		//smthing
+	} else if (my_marks + opp_marks > 20 && my_marks + opp_marks < 50){
+		score += (my_marks - opp_marks) * 2;
 	} else {
 		// End game
 		score += (my_marks - opp_marks) * 10;
