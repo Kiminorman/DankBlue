@@ -6,7 +6,7 @@ import java.util.prefs.NodeChangeListener;
 public class DankBlue implements ReversiAlgorithm
 {
       // Constants
-  private final static int DEPTH_LIMIT = 3; // Just an example value.
+  private final static int DEPTH_LIMIT = 20; // Just an example value.
 
   // Variables
   boolean initialized;
@@ -31,7 +31,9 @@ public class DankBlue implements ReversiAlgorithm
   public void requestMove(GameController requester)
   {
       running = false;
+      System.out.println("DankBlue was forced to select move: " + selectedMove);
       requester.doMove(selectedMove);
+      //Thread.this.interrupt();
   }
 
   public void init(GameController game, GameState state, int playerIndex, int turnLength)
@@ -100,9 +102,8 @@ public class DankBlue implements ReversiAlgorithm
       nodes_list.add(root);
       
       // Create child nodes for tree to given depth
-      createTree(0, depth, nodes_list, myIndex);   
+      createTree(0, depth, nodes_list, myIndex);
       
-      //long startTime = System.currentTimeMillis();
       // Propagate score
       find_leaf_parents(root, childparent);
       if (depth % 2 == 1){
@@ -111,36 +112,28 @@ public class DankBlue implements ReversiAlgorithm
     	  maximize = false; // bottom level minimization level
       }
       for (i = 0; i < childparent.size(); i++) {
+    	  if (running == false) {
+        	  return null;
+          }
     	  leaf_parent = (Node) childparent.elementAt(i);
     	  leaf_parent.propagateScore(maximize);
       }
       
-      /*
-      // Get corner everytime
-      if((node.getMove().getX() == 0 || node.getMove().getX() == 7) &&
- 		 (node.getMove().getY() == 0 || node.getMove().getY() == 7)) {
-      }*/
-      //long endTime   = System.currentTimeMillis();
-      //long totalTime = endTime - startTime;
-      //System.out.println("Time to propagate: " + totalTime);
-      
-      //root.print();
-      // Print tree
+      /*// Print tree
       if (depth == 2){
     	  printTree(root, 0, 0); // Print tree to check something
-      }
+      }*/
       
       // Select move
       if (moves.size() > 0) {
     	  optimalNode = root.getOptimalChild();
           optimalMove = optimalNode.getMove(); // Optimal child
           
+          //print debug info
           System.out.println(moves);
-          /*//print debug info
-          
           System.out.println("DankBlue chose move: " + optimalMove);
           String field = root.getState().toString();
-		  System.out.println(field);*/
+		  System.out.println(field);
       } else {
               optimalMove = null;
       }
@@ -148,9 +141,11 @@ public class DankBlue implements ReversiAlgorithm
   }
   
   
-  
   void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
   {
+	  if (running == false) {
+		  return;
+	  }
 	  Vector childit = noodi.getChildren(); // Take children
 	  int childCount = childit.size();		// Calc number of children
 	  
@@ -179,6 +174,9 @@ public class DankBlue implements ReversiAlgorithm
 	  Node node;
 	  
 	  while (!nodes.isEmpty()) {
+		  if (running == false){
+			  return;
+		  }
 		  node = (Node)nodes.elementAt(0);
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
 		  counter++;
