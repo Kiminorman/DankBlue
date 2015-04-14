@@ -165,7 +165,7 @@
 	  }
   }
   
-  void propagate_score(Node noodi, Vector childparent) // This function will propagate score
+  void propagate_score(Node noodi, Vector childparent) // This function will find nodes to propagate score
   {
 	  Vector childit = noodi.getChildren(); // Take children
 	  int childCount = childit.size();		// Calc number of children
