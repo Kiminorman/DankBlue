@@ -1,1 +1,1 @@
-@java -cp .;Reversi_cmd.jar reversi.CommandLineGame %1 %2 %3
+@java -cp ..\bin;.;Reversi_cmd.jar reversi.CommandLineGame %1 %2 %3
