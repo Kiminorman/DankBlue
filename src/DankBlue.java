@@ -6,7 +6,7 @@ import java.util.prefs.NodeChangeListener;
 public class DankBlue implements ReversiAlgorithm
 {
       // Constants
-  private final static int DEPTH_LIMIT = 4; // Just an example value.
+  private final static int DEPTH_LIMIT = 5; // Just an example value.
   
   // Variables
   boolean initialized;
