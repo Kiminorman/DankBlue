@@ -6,7 +6,8 @@ import java.util.prefs.NodeChangeListener;
 public class DankBlue implements ReversiAlgorithm
 {
       // Constants
-  private final static int DEPTH_LIMIT = 20; // Just an example value.
+  private final static int DEPTH_LIMIT = 8; // Just an example value.
+
   // Variables
   boolean initialized;
   volatile boolean running; // Note: volatile for synchronization issues.
@@ -32,7 +33,6 @@ public class DankBlue implements ReversiAlgorithm
       running = false;
       System.out.println("DankBlue was forced to select move: " + selectedMove);
       requester.doMove(selectedMove);
-      //Thread.this.interrupt();
   }
 
   public void init(GameController game, GameState state, int playerIndex, int turnLength)
@@ -72,7 +72,6 @@ public class DankBlue implements ReversiAlgorithm
           controller.doMove(selectedMove);
       }
   }
-  
   
   
   Move searchToDepth(int depth)
@@ -118,21 +117,16 @@ public class DankBlue implements ReversiAlgorithm
     	  leaf_parent.propagateScore(maximize);
       }
       
-      /*// Print tree
-      if (depth == 2){
-    	  printTree(root, 0, 0); // Print tree to check something
-      }*/
-      
       // Select move
       if (moves.size() > 0) {
     	  optimalNode = root.getOptimalChild();
           optimalMove = optimalNode.getMove(); // Optimal child
           
-          //print debug info
+          /*//print debug info
           System.out.println(moves);
           System.out.println("DankBlue chose move: " + optimalMove);
           String field = root.getState().toString();
-		  System.out.println(field);
+		  System.out.println(field);*/
       } else {
               optimalMove = null;
       }
@@ -197,8 +191,6 @@ public class DankBlue implements ReversiAlgorithm
 		  }
 	      nodes.removeElementAt(0);
 	  }
-	  //System.out.println("dep:" + depth);
-	  //System.out.println("counter:" + counter);
       if (depth < depth_lim) {
     	  pl_index++;
       	  pl_index = pl_index % 2;
@@ -209,6 +201,8 @@ public class DankBlue implements ReversiAlgorithm
 
   private double calc_scores(Node node) {
 	// Calculates score for a given node
+	int my_marks, opp_marks;
+	  
 	int x, y;
 	double score = 0;
 	GameState field = node.getState();
@@ -222,7 +216,20 @@ public class DankBlue implements ReversiAlgorithm
 				score -= gameboard[y][x];
 			}
 		}
-	}	
+	}
+	
+	my_marks = field.getMarkCount(myIndex);
+	opp_marks = field.getMarkCount(myIndex ^ 1);
+	if (my_marks + opp_marks < 20) {
+		// mobility
+		score += (opp_marks - my_marks) * 5;
+	} else if (my_marks + opp_marks < 55){
+		//smthing
+	} else {
+		// End game
+		score += (my_marks - opp_marks) * 10;
+	}
+	
 	return score;
   }
 
