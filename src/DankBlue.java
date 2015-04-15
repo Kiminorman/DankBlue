@@ -224,7 +224,7 @@ public class DankBlue implements ReversiAlgorithm
 		}
 	}
 	
-	/*my_moves = node.getState().getPossibleMoveCount(myIndex);
+	my_moves = node.getState().getPossibleMoveCount(myIndex);
 	opp_moves = node.getState().getPossibleMoveCount(myIndex ^ 1);
 	
 	if (my_moves > opp_moves){
@@ -252,7 +252,7 @@ public class DankBlue implements ReversiAlgorithm
 	} else {
 		// End game
 		score += (my_marks - opp_marks) * 5;
-	}*/
+	}
 	
 	return score;
   }
