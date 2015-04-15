@@ -4,7 +4,7 @@ import java.util.Vector;
 public class DankBlue implements ReversiAlgorithm
 {
       // Constants
-  private final static int DEPTH_LIMIT = 5; // Just an example value.
+  private final static int DEPTH_LIMIT = 8;// Just an example value.
 
   // Variables
   boolean initialized;
@@ -13,6 +13,7 @@ public class DankBlue implements ReversiAlgorithm
   GameState initialState;
   int myIndex;
   Move selectedMove;
+  Vector stable = new Vector();
   double[][] gameboard = new double[][]{
 		  { 100, -10, 10, 0, 0, 10, -10, 100},
 		  { -10, -15,  3, 0, 0,  3, -15, -10},
@@ -62,6 +63,7 @@ public class DankBlue implements ReversiAlgorithm
           // Check that there's a new move available.
           if (newMove != null)
               selectedMove = newMove;
+          System.out.println(currentDepth);
       }
   
       if (running) // Make a move if there is still time left.
@@ -218,8 +220,7 @@ public class DankBlue implements ReversiAlgorithm
 	// Calculates score for a given node
 	int my_marks, opp_marks;
 	int my_moves, opp_moves;
-	int frontier_total;
-	int stable_total;
+	int disks_total;
 	int mark;
 	
 	int x, y;
@@ -239,13 +240,10 @@ public class DankBlue implements ReversiAlgorithm
 		}
 	}
 	
-	// Frontier disk evaluation
-	frontier_total = frontierDisk(node);
-	score += frontier_total;
+	// Frontier disk evaluation and Stable disk evaluation
+	disks_total = checkDisks(node);
+	score += disks_total;
 	
-	// Stable disk evaluation
-	stable_total = stableDisk(node);
-	score += stable_total;
 	
 	// Move evaluation
 	my_moves = node.getState().getPossibleMoveCount(myIndex);
@@ -306,16 +304,45 @@ public class DankBlue implements ReversiAlgorithm
 	return score;
   }
 
-int stableDisk(Node node) {
-	int points = 0;
-	GameState field = node.getState();
+boolean stableDisk(int x, int y, GameState field) {
+	//Check if already stable
+	if (stable.contains(new Slot(x,y))) {
+		return true;
+	}
 	
+	Slot check1, check2;
+
+	//left -> right
+	check1 = new Slot((x-1), y);
+	check2 = new Slot((x+1), y);
+	if (!((x == 0) || (x == 7) || stable.contains(check1) || stable.contains(check2))) {
+		return false;
+	}
+	// upleft -> downrigth
+	check1 = new Slot((x-1), (y+1));
+	check2 = new Slot((x+1), (y-1));
+	if (!((x == 0) || (x == 7) || (y == 0) || (y == 7) || stable.contains(check1) || stable.contains(check2))) {
+		return false;
+	}
+	// up -> down
+	check1 = new Slot(x, (y+1));
+	check2 = new Slot(x, (y-1));
+	if (!((y == 0) || (y== 7) || stable.contains(check1) || stable.contains(check2))) {
+		return false;
+	}
+	// downleft -> uprigth
+	check1 = new Slot((x+1), (y-1));
+	check2 = new Slot((x-1), (y+1));
+	if (!((x == 0) || (x == 7) || (y == 0) || (y == 7) || stable.contains(check1) || stable.contains(check2))) {
+		return false;
+	}
 	
-	
-	return points;
+	// Stable disk
+	stable.add(new Slot(x,y));
+	return true;
 }
   
-int frontierDisk(Node node) {
+int checkDisks(Node node) {
 	int my_frontier = 0;
 	int opp_frontier = 0;
 	int points = 0;
@@ -328,6 +355,11 @@ int frontierDisk(Node node) {
 			if (mark == -1) { // Here is empty square
 				continue; 
 			} else { // Here we have mark
+				if (mark == myIndex){
+					if (stableDisk(x, y, field)) {
+						points += 25;
+					}
+				}
 				if (isFrontier(x, y, field)){
 					if (mark == myIndex) {
 						my_frontier += 1;
@@ -338,7 +370,7 @@ int frontierDisk(Node node) {
 			}
 		}
 	}
-	points = (opp_frontier - my_frontier) * 5;
+	points += (opp_frontier - my_frontier) * 7;
 	return points;
 }
   
@@ -405,4 +437,3 @@ int frontierDisk(Node node) {
 	  }
   }
 }
-  
