@@ -219,6 +219,7 @@ public class DankBlue implements ReversiAlgorithm
 	int my_marks, opp_marks;
 	int my_moves, opp_moves;
 	int frontier_total;
+	int stable_total;
 	int mark;
 	
 	int x, y;
@@ -241,6 +242,10 @@ public class DankBlue implements ReversiAlgorithm
 	// Frontier disk evaluation
 	frontier_total = frontierDisk(node);
 	score += frontier_total;
+	
+	// Stable disk evaluation
+	stable_total = stableDisk(node);
+	score += stable_total;
 	
 	// Move evaluation
 	my_moves = node.getState().getPossibleMoveCount(myIndex);
@@ -286,6 +291,15 @@ public class DankBlue implements ReversiAlgorithm
 	return score;
   }
 
+int stableDisk(Node node) {
+	int points = 0;
+	GameState field = node.getState();
+	
+	
+	
+	return points;
+}
+  
 int frontierDisk(Node node) {
 	int my_frontier = 0;
 	int opp_frontier = 0;
@@ -309,7 +323,7 @@ int frontierDisk(Node node) {
 			}
 		}
 	}
-	points = (my_frontier - opp_frontier) * 5;
+	points = (opp_frontier - my_frontier) * 5;
 	return points;
 }
   
