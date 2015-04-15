@@ -252,6 +252,21 @@ public class DankBlue implements ReversiAlgorithm
 	my_marks = field.getMarkCount(myIndex);
 	opp_marks = field.getMarkCount(myIndex ^ 1);
 	
+	if (my_marks == 0){
+		score -= 200;
+	}
+	if (opp_marks == 0){
+		score += 200;
+	}
+	
+	if(my_marks + opp_marks == 64 && my_marks > opp_marks){
+		score += 200;
+	}
+	
+	if(my_marks + opp_marks ==64 && my_marks < opp_marks){
+		score -= 200;
+	}
+	
 	if (my_marks + opp_marks < 25) {
 		// mobility
 		if (my_moves > opp_moves){
