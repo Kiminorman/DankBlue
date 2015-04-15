@@ -220,16 +220,19 @@ public class DankBlue implements ReversiAlgorithm
 	// Calculates score for a given node
 	int my_marks, opp_marks;
 	int my_moves, opp_moves;
-	  
+	int frontier_total;
+	int mark;
+	
 	int x, y;
 	double score = 0;
 	// Static field evaluation
 	GameState field = node.getState();
 	for (x = 0; x < 8; x++) {
 		for (y = 0; y < 8; y++){
-			if (field.getMarkAt(x, y) == myIndex) {
+			mark = field.getMarkAt(x, y);
+			if (mark == myIndex) {
 				score += gameboard[y][x];
-			} else if (field.getMarkAt(x, y) == -1) {
+			} else if (mark == -1) {
 				continue;
 			} else {
 				score -= gameboard[y][x];
@@ -237,35 +240,105 @@ public class DankBlue implements ReversiAlgorithm
 		}
 	}
 	
+	// Frontier disk evaluation
+	frontier_total = frontierDisk(node);
+	score += frontier_total;
+	
+	// Move evaluation
 	my_moves = node.getState().getPossibleMoveCount(myIndex);
 	opp_moves = node.getState().getPossibleMoveCount(myIndex ^ 1);
 	
-	if (my_moves > opp_moves){
-		score += 10;
-	}
-	if (my_moves < opp_moves){
-		score -= 10;
-	}
-	if (my_moves == 0){
-		score -= 40;
-	}
-	if (opp_moves == 0){
-		score += 40;
-	}
-	
+	// Mark count evaluation
 	my_marks = field.getMarkCount(myIndex);
 	opp_marks = field.getMarkCount(myIndex ^ 1);
+	
 	if (my_marks + opp_marks < 25) {
 		// mobility
+		if (my_moves > opp_moves){
+			score += 10;
+		}
+		if (my_moves < opp_moves){
+			score -= 10;
+		}
+		if (my_moves == 0){
+			score -= 40;
+		}
+		if (opp_moves == 0){
+			score += 40;
+		}
 	} else if (my_marks + opp_marks > 25 && my_marks + opp_marks < 50){
 		score += (my_marks - opp_marks);
-
+		if (my_moves > opp_moves){
+			score += 10;
+		}
+		if (my_moves < opp_moves){
+			score -= 10;
+		}
+		if (my_moves == 0){
+			score -= 40;
+		}
+		if (opp_moves == 0){
+			score += 40;
+		}
 	} else {
 		// End game
 		score += (my_marks - opp_marks) * 5;
 	}
 	
 	return score;
+  }
+
+int frontierDisk(Node node) {
+	int my_frontier = 0;
+	int opp_frontier = 0;
+	int points = 0;
+	int x, y, mark;
+	GameState field = node.getState();
+	
+	for (x = 0; x < 8; x++) {
+		for (y = 0; y < 8; y++){
+			mark = field.getMarkAt(x, y);
+			if (mark == -1) { // Here is empty square
+				continue; 
+			} else { // Here we have mark
+				if (isFrontier(x, y, field)){
+					if (mark == myIndex) {
+						my_frontier += 1;
+					} else {
+						opp_frontier += 1;
+					}
+				}
+			}
+		}
+	}
+	points = (my_frontier - opp_frontier) * 5;
+	return points;
+}
+  
+  boolean isFrontier(int x, int y, GameState field){
+	  int i, k;
+	  int downx = -1, downy = -1;
+	  int upx = 1, upy = 1;
+	  
+	  if (x == 0) {
+		  downx = 0;
+	  } else if (x == 7) {
+		  upx = 0;
+	  }
+	  if (y == 0) {
+		  downy = 0;
+	  } else if (y == 7) {
+		  upy = 0;
+	  }
+	  
+	  for (i = downx; i < upx; i++) {
+			for (k = downy; k < upy; k++) {
+				if (field.getMarkAt(x+i, y+k) == -1) {
+					return true;
+				}
+			}
+		}
+	  return false;
   }
 
   void printTree(Node noodi, int dep, int mode, int dep_limit) // This function will print the tree
