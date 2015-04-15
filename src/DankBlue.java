@@ -1,12 +1,10 @@
 import reversi.*;
 import java.util.Vector;
-import java.util.Random;
-import java.util.prefs.NodeChangeListener;
 
 public class DankBlue implements ReversiAlgorithm
 {
       // Constants
-  private final static int DEPTH_LIMIT = 8; // Just an example value.
+  private final static int DEPTH_LIMIT = 5; // Just an example value.
 
   // Variables
   boolean initialized;
