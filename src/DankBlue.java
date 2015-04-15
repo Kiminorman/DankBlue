@@ -240,26 +240,36 @@ public class DankBlue implements ReversiAlgorithm
 	my_moves = node.getState().getPossibleMoveCount(myIndex);
 	opp_moves = node.getState().getPossibleMoveCount(myIndex ^ 1);
 	
-	if (my_moves > opp_moves){
-		score += 10;
-	}
-	if (my_moves < opp_moves){
-		score -= 10;
-	}
-	if (my_moves == 0){
-		score -= 40;
-	}
-	if (opp_moves == 0){
-		score += 40;
-	}
-	
 	my_marks = field.getMarkCount(myIndex);
 	opp_marks = field.getMarkCount(myIndex ^ 1);
 	if (my_marks + opp_marks < 25) {
 		// mobility
+		if (my_moves > opp_moves){
+			score += 10;
+		}
+		if (my_moves < opp_moves){
+			score -= 10;
+		}
+		if (my_moves == 0){
+			score -= 40;
+		}
+		if (opp_moves == 0){
+			score += 40;
+		}
 	} else if (my_marks + opp_marks > 25 && my_marks + opp_marks < 50){
 		score += (my_marks - opp_marks);
-
+		if (my_moves > opp_moves){
+			score += 10;
+		}
+		if (my_moves < opp_moves){
+			score -= 10;
+		}
+		if (my_moves == 0){
+			score -= 40;
+		}
+		if (opp_moves == 0){
+			score += 40;
+		}
 	} else {
 		// End game
 		score += (my_marks - opp_marks) * 5;
