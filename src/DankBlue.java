@@ -16,14 +16,14 @@ public class DankBlue implements ReversiAlgorithm
   int myIndex;
   Move selectedMove;
   double[][] gameboard = new double[][]{
-		  { 100, -10, 10, 5, 5, 10, -10, 100},
-		  { -10, -15,  0, 0, 0,  0, -15, -10},
-		  {  10,   0,  0, 0, 0,  0,   0,  10},
-		  {   5,   0,  0, 0, 0,  0,   0,   5},
-		  {   5,   0,  0, 0, 0,  0,   0,   5},
-		  {  10,   0,  0, 0, 0,  0,   0,  10},
-		  { -10, -15,  0, 0, 0,  0, -15, -10},
-		  { 100, -10, 10, 5, 5, 10, -10, 100}
+		  { 100, -10, 10, 0, 0, 10, -10, 100},
+		  { -10, -15,  3, 0, 0,  3, -15, -10},
+		  {  10,   3,  0, 0, 0,  0,   3,  10},
+		  {   0,   0,  0, 0, 0,  0,   0,   0},
+		  {   0,   0,  0, 0, 0,  0,   0,   0},
+		  {  10,   3,  0, 0, 0,  0,   3,  10},
+		  { -10, -15,  3, 0, 0,  3, -15, -10},
+		  { 100, -10, 10, 0, 0, 10, -10, 100}
   };
 
   public DankBlue() {} //the constructor
@@ -94,8 +94,7 @@ public class DankBlue implements ReversiAlgorithm
       Vector moves = initialState.getPossibleMoves(myIndex);
       
       //create root node
-      Move rootmove = new Move(4,4,0);
-      Node root = new Node(initialState, rootmove);
+      Node root = new Node(initialState, null);
       Vector nodes_list = new Vector();
       nodes_list.add(root);
       
@@ -119,9 +118,9 @@ public class DankBlue implements ReversiAlgorithm
     	  }
       }
       
-      if (depth == 5) {
+      /*if (depth == 5) {
     	  printTree(root, 0, 0, 2);
-      }
+      }*/
       
       // Select move
       if (moves.size() > 0) {
@@ -225,29 +224,35 @@ public class DankBlue implements ReversiAlgorithm
 		}
 	}
 	
-	my_moves = node.getState().getPossibleMoveCount(myIndex);
+	/*my_moves = node.getState().getPossibleMoveCount(myIndex);
 	opp_moves = node.getState().getPossibleMoveCount(myIndex ^ 1);
 	
+	if (my_moves > opp_moves){
+		score += 10;
+	}
+	if (my_moves < opp_moves){
+		score -= 10;
+	}
 	if (my_moves == 0){
-		score -= 10000000;
+		score -= 40;
 	}
 	if (opp_moves == 0){
-		score += 10000000;
+		score += 40;
 	}
 	
 	
 	
 	my_marks = field.getMarkCount(myIndex);
 	opp_marks = field.getMarkCount(myIndex ^ 1);
-	if (my_marks + opp_marks < 20) {
+	if (my_marks + opp_marks < 25) {
 		// mobility
-	} else if (my_marks + opp_marks > 20 && my_marks + opp_marks < 50){
-		score += (my_marks - opp_marks) * 2;
+	} else if (my_marks + opp_marks > 25 && my_marks + opp_marks < 50){
+		score += (my_marks - opp_marks);
 
 	} else {
 		// End game
-		score += (my_marks - opp_marks) * 10;
-	}
+		score += (my_marks - opp_marks) * 5;
+	}*/
 	
 	return score;
   }
