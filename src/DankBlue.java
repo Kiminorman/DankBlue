@@ -16,14 +16,14 @@ public class DankBlue implements ReversiAlgorithm
   int myIndex;
   Move selectedMove;
   double[][] gameboard = new double[][]{
-		  { 100, -10, 10, 5, 5, 10, -10, 100},
-		  { -10, -15,  0, 0, 0,  0, -15, -10},
-		  {  10,   0,  0, 0, 0,  0,   0,  10},
-		  {   5,   0,  0, 0, 0,  0,   0,   5},
-		  {   5,   0,  0, 0, 0,  0,   0,   5},
-		  {  10,   0,  0, 0, 0,  0,   0,  10},
-		  { -10, -15,  0, 0, 0,  0, -15, -10},
-		  { 100, -10, 10, 5, 5, 10, -10, 100}
+		  { 100, -10, 10, 0, 0, 10, -10, 100},
+		  { -10, -15,  3, 0, 0,  3, -15, -10},
+		  {  10,   3,  0, 0, 0,  0,   3,  10},
+		  {   0,   0,  0, 0, 0,  0,   0,   0},
+		  {   0,   0,  0, 0, 0,  0,   0,   0},
+		  {  10,   3,  0, 0, 0,  0,   3,  10},
+		  { -10, -15,  3, 0, 0,  3, -15, -10},
+		  { 100, -10, 10, 0, 0, 10, -10, 100}
   };
 
   public DankBlue() {} //the constructor
@@ -93,9 +93,17 @@ public class DankBlue implements ReversiAlgorithm
       Vector childparent = new Vector();
       Vector moves = initialState.getPossibleMoves(myIndex);
       
+      // Takes always corner
+      for (i = 0; i < moves.size(); i++) {
+    	 Move move = (Move) moves.elementAt(i);
+    	 if (((move.getX() == 0) || (move.getX() == 7)) &&
+    	     ((move.getY() == 0) || (move.getY() == 7))) {
+    		 return move;
+    	 }
+      }
+      
       //create root node
-      Move rootmove = new Move(4,4,0);
-      Node root = new Node(initialState, rootmove);
+      Node root = new Node(initialState, null);
       Vector nodes_list = new Vector();
       nodes_list.add(root);
       
@@ -103,25 +111,27 @@ public class DankBlue implements ReversiAlgorithm
       createTree(0, depth, nodes_list, myIndex);
       
       // Propagate score
-      find_leaf_parents(root, childparent);
-      if (depth % 2 == 1){
-    	  maximize = true; // bottom level maximation level
-      } else {
-    	  maximize = false; // bottom level minimization level
-      }
-      for (i = 0; i < childparent.size(); i++) {
-    	  if (running == false) {
-        	  return null;
-          }
-    	  leaf_parent = (Node) childparent.elementAt(i);
-    	  if (leaf_parent != root) {
-    		  leaf_parent.propagateScore(maximize);
-    	  }
+      if (depth > 1){
+	      find_leaf_parents(root, childparent);
+	      if (depth % 2 == 1){
+	    	  maximize = true; // bottom level maximation level
+	      } else {
+	    	  maximize = false; // bottom level minimization level
+	      }
+	      for (i = 0; i < childparent.size(); i++) {
+	    	  if (running == false) {
+	        	  return null;
+	          }
+	    	  leaf_parent = (Node) childparent.elementAt(i);
+	    	  if (leaf_parent != null){
+	    		  leaf_parent.propagateScore(maximize);
+	    	  }
+	      }
       }
       
-      if (depth == 5) {
+      /*if (depth == 5) {
     	  printTree(root, 0, 0, 2);
-      }
+      }*/
       
       // Select move
       if (moves.size() > 0) {
@@ -134,7 +144,8 @@ public class DankBlue implements ReversiAlgorithm
           String field = root.getState().toString();
 		  System.out.println(field);*/
       } else {
-              optimalMove = null;
+    	  System.out.println("No moves to do!");
+    	  optimalMove = null;
       }
       return optimalMove;
   }
@@ -212,6 +223,7 @@ public class DankBlue implements ReversiAlgorithm
 	  
 	int x, y;
 	double score = 0;
+	// Static field evaluation
 	GameState field = node.getState();
 	for (x = 0; x < 8; x++) {
 		for (y = 0; y < 8; y++){
@@ -228,15 +240,6 @@ public class DankBlue implements ReversiAlgorithm
 	my_moves = node.getState().getPossibleMoveCount(myIndex);
 	opp_moves = node.getState().getPossibleMoveCount(myIndex ^ 1);
 	
-	if (my_moves == 0){
-		score -= 10000000;
-	}
-	if (opp_moves == 0){
-		score += 10000000;
-	}
-	
-	
-	
 	my_marks = field.getMarkCount(myIndex);
 	opp_marks = field.getMarkCount(myIndex ^ 1);
 	if (my_marks + opp_marks < 20) {
@@ -245,11 +248,10 @@ public class DankBlue implements ReversiAlgorithm
 	} else if (my_marks + opp_marks < 40){
 		score += (my_marks - opp_marks) * 2;
 	} else if (my_marks + opp_marks < 55){	
-	} else {
+	} else { 
 		// End game
 		score += (my_marks - opp_marks) * 10;
 	}
-	
 	return score;
   }
 
@@ -258,7 +260,11 @@ public class DankBlue implements ReversiAlgorithm
 	  String field;
 	  String move_string;
 	  Vector childit = noodi.getChildren(); // Take children
+	  if (childit == null) {
+		  return;
+	  }
 	  int childCount = childit.size();		// Calc number of children
+	  
 	  
 	  // Print the wanted info
 	  if (mode == 0){
