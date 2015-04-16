@@ -12,17 +12,18 @@ public class DankBlue implements ReversiAlgorithm
   GameController controller;
   GameState initialState;
   int myIndex;
+  int oppIndex;
   Move selectedMove;
   Vector stable = new Vector();
   double[][] gameboard = new double[][]{
-		  { 100, -10, 10, 0, 0, 10, -10, 100},
-		  { -10, -15,  3, 0, 0,  3, -15, -10},
-		  {  10,   3,  0, 0, 0,  0,   3,  10},
-		  {   0,   0,  0, 0, 0,  0,   0,   0},
-		  {   0,   0,  0, 0, 0,  0,   0,   0},
-		  {  10,   3,  0, 0, 0,  0,   3,  10},
-		  { -10, -15,  3, 0, 0,  3, -15, -10},
-		  { 100, -10, 10, 0, 0, 10, -10, 100}
+		  {  50, -15,  5, 3, 3,  5, -15,  50},
+		  { -15, -20,  3, 0, 0,  3, -20, -15},
+		  {   5,   3,  0, 0, 0,  0,   3,   5},
+		  {   3,   0,  0, 0, 0,  0,   0,   3},
+		  {   3,   0,  0, 0, 0,  0,   0,   3},
+		  {   5,   3,  0, 0, 0,  0,   3,   5},
+		  { -15, -20,  3, 0, 0,  3, -20, -15},
+		  {  50, -15,  5, 3, 3,  5, -15,  50}
   };
 
   public DankBlue() {} //the constructor
@@ -38,6 +39,7 @@ public class DankBlue implements ReversiAlgorithm
   {
       initialState = state;
       myIndex = playerIndex;
+      oppIndex = (playerIndex ^ 1);
       controller = game;
       initialized = true;
   }
@@ -63,7 +65,7 @@ public class DankBlue implements ReversiAlgorithm
           // Check that there's a new move available.
           if (newMove != null)
               selectedMove = newMove;
-          System.out.println(currentDepth);
+          //System.out.println(currentDepth);
       }
   
       if (running) // Make a move if there is still time left.
@@ -114,7 +116,7 @@ public class DankBlue implements ReversiAlgorithm
       if (depth > 1){
 	      find_leaf_parents(root, childparent);
 	      if (depth % 2 == 1){
-	    	  maximize = true; // bottom level maximation level
+	    	  maximize = true; // bottom level maximization level
 	      } else {
 	    	  maximize = false; // bottom level minimization level
 	      }
@@ -129,7 +131,7 @@ public class DankBlue implements ReversiAlgorithm
 	      }
       }
       
-      /*if (depth == 5) {
+      /*if (depth == 4) {
     	  printTree(root, 0, 0, 2);
       }*/
       
@@ -222,9 +224,9 @@ public class DankBlue implements ReversiAlgorithm
 	int my_moves, opp_moves;
 	int disks_total;
 	int mark;
-	
 	int x, y;
 	double score = 0;
+	
 	// Static field evaluation
 	GameState field = node.getState();
 	for (x = 0; x < 8; x++) {
@@ -247,11 +249,11 @@ public class DankBlue implements ReversiAlgorithm
 	
 	// Move evaluation
 	my_moves = node.getState().getPossibleMoveCount(myIndex);
-	opp_moves = node.getState().getPossibleMoveCount(myIndex ^ 1);
+	opp_moves = node.getState().getPossibleMoveCount(oppIndex);
 	
 	// Mark count evaluation
 	my_marks = field.getMarkCount(myIndex);
-	opp_marks = field.getMarkCount(myIndex ^ 1);
+	opp_marks = field.getMarkCount(oppIndex);
 	
 	if (my_marks == 0){
 		score -= 200;
@@ -260,16 +262,17 @@ public class DankBlue implements ReversiAlgorithm
 		score += 200;
 	}
 	
-	if(my_marks + opp_marks == 64 && my_marks > opp_marks){
+	if((my_marks + opp_marks == 64) && (my_marks > opp_marks)){
 		score += 200;
 	}
 	
-	if(my_marks + opp_marks ==64 && my_marks < opp_marks){
+	if((my_marks + opp_marks ==64) && (my_marks < opp_marks)){
 		score -= 200;
 	}
 	
 	if (my_marks + opp_marks < 25) {
 		// mobility
+		score += (my_marks - opp_marks) * 2;
 		if (my_moves > opp_moves){
 			score += 10;
 		}
@@ -282,8 +285,8 @@ public class DankBlue implements ReversiAlgorithm
 		if (opp_moves == 0){
 			score += 40;
 		}
-	} else if (my_marks + opp_marks > 25 && my_marks + opp_marks < 50){
-		score += (my_marks - opp_marks);
+	} else if ((my_marks + opp_marks > 25) && (my_marks + opp_marks < 50)){
+		score += (my_marks - opp_marks) * 3;
 		if (my_moves > opp_moves){
 			score += 10;
 		}
@@ -298,14 +301,14 @@ public class DankBlue implements ReversiAlgorithm
 		}
 	} else {
 		// End game
-		score += (my_marks - opp_marks) * 5;
+		score += 50 * (my_marks - opp_marks)/ (my_marks + opp_marks);
 	}
-	
 	return score;
   }
 
 boolean stableDisk(int x, int y, GameState field) {
 	//Check if already stable
+	////////////////////////////////////////// EI tomi stable vektori kusee ja pahasti
 	if (stable.contains(new Slot(x,y))) {
 		return true;
 	}
@@ -355,11 +358,11 @@ int checkDisks(Node node) {
 			if (mark == -1) { // Here is empty square
 				continue; 
 			} else { // Here we have mark
-				if (mark == myIndex){
+				/*if (mark == myIndex){
 					if (stableDisk(x, y, field)) {
 						points += 25;
 					}
-				}
+				}*/
 				if (isFrontier(x, y, field)){
 					if (mark == myIndex) {
 						my_frontier += 1;
@@ -370,7 +373,7 @@ int checkDisks(Node node) {
 			}
 		}
 	}
-	points += (opp_frontier - my_frontier) * 7;
+	points += ((opp_frontier - my_frontier) * 4);
 	return points;
 }
   
