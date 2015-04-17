@@ -77,22 +77,11 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   Move searchToDepth(int depth)
-  {
-      // - Create the tree of depth d (breadth first, depth first, beam search, alpha beta pruning, ...)
-      // - Evaluate the leaf nodes
-      // - If you think normal minimax search is enough, call the propagateScore method of the parent node
-      //   of each leaf node
-      // - Call the getOptimalChild method of the root node
-      // - Return the move in the optimal child of the root node
-      // - Don't forget the time constraint! -> Stop the algorithm when variable "running" becomes "false"
-      //   or when you have reached the maximum search depth.
-	  
+  {  
 	  int i = 0;
-	  Node leaf_parent;
 	  Node optimalNode;
       Move optimalMove;
-      boolean maximize;
-      Vector childparent = new Vector();
+      Vector nodes_list = new Vector();
       Vector moves = initialState.getPossibleMoves(myIndex);
       
       // Takes always corner
@@ -104,33 +93,17 @@ public class DankBlue implements ReversiAlgorithm {
     	 }
       }
       
-      //create root node
+      // Create root node
       Node root = new Node(initialState, null);
-      Vector nodes_list = new Vector();
       nodes_list.add(root);
       
-      // Create child nodes for tree to given depth
+      // Create tree to given depth and score leafs
       createTree(0, depth, nodes_list, myIndex);
       
-      // Propagate score
-      if (depth > 1){
-	      find_leaf_parents(root, childparent);
-	      if (depth % 2 == 1){
-	    	  maximize = true; // bottom level maximization level
-	      } else {
-	    	  maximize = false; // bottom level minimization level
-	      }
-	      for (i = 0; i < childparent.size(); i++) {
-	    	  if (running == false) {
-	        	  return null;
-	          }
-	    	  leaf_parent = (Node) childparent.elementAt(i);
-	    	  if (leaf_parent != null){
-	    		  leaf_parent.propagateScore(maximize);
-	    	  }
-	      }
-      }
+      // Propagate score with propagateScore method
+      spreadScores(depth, root);
       
+      // Print tree info
       if (depth == 4) {
     	  printTree(root, 0, 0, 2);
       }
@@ -195,7 +168,33 @@ public class DankBlue implements ReversiAlgorithm {
   }
 
   
-  void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
+  private void spreadScores(int depth, Node root) {
+	  boolean maximize;
+	  Vector childparent = new Vector();
+	  int i;
+	  Node leaf_parent;
+	  
+	  if (depth > 1){
+	      find_leaf_parents(root, childparent);
+	      if (depth % 2 == 1){
+	    	  maximize = true; // bottom level maximization level
+	      } else {
+	    	  maximize = false; // bottom level minimization level
+	      }
+	      for (i = 0; i < childparent.size(); i++) {
+	    	  if (running == false) {
+	        	  return;
+	          }
+	    	  leaf_parent = (Node) childparent.elementAt(i);
+	    	  if (leaf_parent != null){
+	    		  leaf_parent.propagateScore(maximize);
+	    	  }
+	      }
+	  }
+  }
+  
+  
+  private void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
   {
 	  if (running == false) {
 		  return;
@@ -246,17 +245,18 @@ public class DankBlue implements ReversiAlgorithm {
 	if (total_marks < 25) {
 		// Early game
 		score += move_evaluation(field, factor);				//2
-		//score += frontier_evaluation(field, factor);			//3
+		score += frontier_evaluation(field, factor);			//3
 		score += corner_evaluation(field, factor);				//4
 	} else if (total_marks < 50){
 		// Mid game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
 		score += move_evaluation(field, factor);				//2
-		//score += frontier_evaluation(field, factor);			//3
+		score += frontier_evaluation(field, factor);			//3
 		score += corner_evaluation(field, factor);				//4
 	} else {
 		// End game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
+		score += corner_evaluation(field, factor);
 	}
 	
 	return score;
