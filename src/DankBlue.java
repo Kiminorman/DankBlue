@@ -126,14 +126,14 @@ public class DankBlue implements ReversiAlgorithm {
   }
   
 
-  void createTree(int depth, int depth_lim, Vector nodes, int pl_index) 
-  {
+  void createTree(int depth, int depth_lim, Vector nodes, int pl_index) {
 	  // Makes tree with breadth first search to depth depth_lim
 	  int i = 0;
 	  int counter = 0;
 	  Vector children = new Vector();
 	  Node node;
 	  
+	  // This loop hecks children for every node at certain depth
 	  while (!nodes.isEmpty()) {
 		  if (running == false){
 			  return;
@@ -146,7 +146,7 @@ public class DankBlue implements ReversiAlgorithm {
 			  // here comes the scoring
 			  double score = calc_scores(node);
 			  node.setScore(score);
-		  } else {
+		  } else { // Check children
 		      for (i = 0; i < moves.size(); i++) {
 		    	  Move game_move = (Move) moves.elementAt(i);
 		    	  GameState new_state = node.getState().getNewInstance(game_move);
@@ -159,10 +159,9 @@ public class DankBlue implements ReversiAlgorithm {
 		  }
 	      nodes.removeElementAt(0);
 	  }
+	  // Continue if not yet at limit
       if (depth < depth_lim) {
-    	  pl_index++;
-      	  pl_index = pl_index % 2;
-    	  createTree(depth + 1, depth_lim, children, pl_index);
+    	  createTree(depth + 1, depth_lim, children, pl_index ^ 1);
     	  return;
       }
   }
