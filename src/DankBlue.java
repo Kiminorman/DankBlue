@@ -1,8 +1,8 @@
 import reversi.*;
+
 import java.util.Vector;
 
-public class DankBlue implements ReversiAlgorithm
-{
+public class DankBlue implements ReversiAlgorithm {
       // Constants
   private final static int DEPTH_LIMIT = 8;// Just an example value.
 
@@ -131,9 +131,9 @@ public class DankBlue implements ReversiAlgorithm
 	      }
       }
       
-      /*if (depth == 4) {
+      if (depth == 4) {
     	  printTree(root, 0, 0, 2);
-      }*/
+      }
       
       // Select move
       if (moves.size() > 0) {
@@ -150,30 +150,6 @@ public class DankBlue implements ReversiAlgorithm
     	  optimalMove = null;
       }
       return optimalMove;
-  }
-  
-  
-  void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
-  {
-	  if (running == false) {
-		  return;
-	  }
-	  Vector childit = noodi.getChildren(); // Take children
-	  int childCount = childit.size();		// Calc number of children
-	  
-	  if (childCount == 0) {
-		  // leaf node
-		  Node parent = noodi.getParent();
-		  if (!childparent.contains(parent)) {
-			  childparent.add(parent);
-		  }
-		  return;
-	  } else {
-		  for (int i = 0; i < childCount; i++) {
-			  Node child = (Node) childit.elementAt(i); 
-			  find_leaf_parents(child, childparent); // Has to check if more Node child has more childs
-		  }
-	  }
   }
   
 
@@ -218,98 +194,215 @@ public class DankBlue implements ReversiAlgorithm
       }
   }
 
+  
+  void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
+  {
+	  if (running == false) {
+		  return;
+	  }
+	  Vector childit = noodi.getChildren(); // Take children
+	  int childCount = childit.size();		// Calc number of children
+	  
+	  if (childCount == 0) {
+		  // leaf node
+		  Node parent = noodi.getParent();
+		  if (!childparent.contains(parent)) {
+			  childparent.add(parent);
+		  }
+		  return;
+	  } else {
+		  for (int i = 0; i < childCount; i++) {
+			  Node child = (Node) childit.elementAt(i); 
+			  find_leaf_parents(child, childparent); // Has to check if more Node child has more childs
+		  }
+	  }
+  }
+  
+  
   private double calc_scores(Node node) {
 	// Calculates score for a given node
-	int my_marks, opp_marks;
-	int my_moves, opp_moves;
-	int disks_total;
-	int mark;
-	int x, y;
+	int factor = 100;
+	int my_marks, opp_marks, total_marks;
 	double score = 0;
 	
-	// Static field evaluation
 	GameState field = node.getState();
+	
+	my_marks = field.getMarkCount(myIndex);
+	opp_marks = field.getMarkCount(oppIndex);
+	total_marks = my_marks + opp_marks;
+	
+	// 1. Mark count evaluation
+	// score += mark_evaluation(my_marks, opp_marks, factor);
+	
+	// 2. Move count evaluation
+	// score += move_evaluation(field, factor);
+	
+	// 3. Frontier disk evaluation
+	// score += frontier_evaluation(field, factor);
+	
+	// 4. Corner evaluation
+	// score += corner_evaluation(field, factor);
+	
+	if (total_marks < 25) {
+		// Early game
+		score += move_evaluation(field, factor);				//2
+		//score += frontier_evaluation(field, factor);			//3
+		score += corner_evaluation(field, factor);				//4
+	} else if (total_marks < 50){
+		// Mid game
+		score += mark_evaluation(my_marks, opp_marks, factor);	//1
+		score += move_evaluation(field, factor);				//2
+		//score += frontier_evaluation(field, factor);			//3
+		score += corner_evaluation(field, factor);				//4
+	} else {
+		// End game
+		score += mark_evaluation(my_marks, opp_marks, factor);	//1
+	}
+	
+	return score;
+  }
+  
+  
+  private double mark_evaluation(double my_marks, double opp_marks, int factor) {
+	  // 1. Mark count evaluation
+	  double mark_score;
+	  
+	  mark_score = (factor * ((my_marks - opp_marks) / (my_marks + opp_marks)));
+	  
+	  return mark_score;
+  }
+
+  
+  private double move_evaluation(GameState field, int factor) {
+	  // 2. Move count evaluation
+	  double my_moves, opp_moves, move_score = 0;
+	  
+	  my_moves = field.getPossibleMoveCount(myIndex);
+	  opp_moves = field.getPossibleMoveCount(oppIndex);
+	  if ((my_moves + opp_moves) != 0){
+		  move_score = (factor * ((my_moves - opp_moves) / (my_moves + opp_moves)));
+	  }
+	  
+	  return move_score;
+  }
+  
+  
+  private double frontier_evaluation(GameState field, int factor) {
+		// Goes trough all disks on the field and calculates frontier disks score
+		int my_frontier = 0, opp_frontier = 0, frontier_score = 0;
+		int x, y, mark;
+		
+		// We check every square for frontier disks
+		for (x = 0; x < 8; x++) {
+			for (y = 0; y < 8; y++){
+				mark = field.getMarkAt(x, y);
+				if (mark == -1) { // Here is empty square
+					continue; 
+				} else { // Here we have disk
+					if (isFrontier(x, y, field)){
+						if (mark == myIndex) {
+							my_frontier += 1;
+						} else {
+							opp_frontier += 1;
+						}
+					}
+				}
+			}
+		}
+		if ((opp_frontier + my_frontier) != 0){
+			frontier_score = (factor * ((opp_frontier - my_frontier) 
+									  / (opp_frontier + my_frontier)));
+		}
+		
+		return frontier_score;
+	}
+
+  
+  boolean isFrontier(int x, int y, GameState field){
+	  // Checks if the given disk is frontier disk
+	  int i, k;
+	  int downx = -1, downy = -1;
+	  int upx = 1, upy = 1;
+	  
+	  // Check edges
+	  if (x == 0) {
+		  downx = 0;
+	  } else if (x == 7) {
+		  upx = 0;
+	  }
+	  if (y == 0) {
+		  downy = 0;
+	  } else if (y == 7) {
+		  upy = 0;
+	  }
+	  
+	  // Check surrounding disks
+	  for (i = downx; i < upx; i++) {
+			for (k = downy; k < upy; k++) {
+				if (field.getMarkAt(x+i, y+k) == -1) {
+					return true;
+				}
+			}
+		}
+	  
+	  return false;
+  }
+  
+  
+  private double corner_evaluation(GameState field, int factor) {
+	// Calculates corner points
+	double my_corner = 0, opp_corner = 0, corner_points = 0;
+	int i;
+	double[] corners = new double[4];
+	
+	corners[0] = field.getMarkAt(0, 0);
+	corners[1] = field.getMarkAt(0, 7);
+	corners[2] = field.getMarkAt(7, 0);
+	corners[3] = field.getMarkAt(7, 7);
+	
+	for (i = 0; i < 4; i++) {
+		if (corners[i] == myIndex) {
+			my_corner += 1;
+		} else if (corners[i] == oppIndex) {
+			opp_corner += 1;
+		}	
+	}
+
+	if ((my_corner + opp_corner) != 0){
+		corner_points = (factor * ((my_corner - opp_corner) / (my_corner + opp_corner)));
+	}
+	
+	return corner_points;
+}
+
+  
+  private int static_evaluation(GameState field){
+	int mark;
+	int x, y;
+	int static_score = 0;
+	
+	// Static field evaluation
 	for (x = 0; x < 8; x++) {
 		for (y = 0; y < 8; y++){
 			mark = field.getMarkAt(x, y);
 			if (mark == myIndex) {
-				score += gameboard[y][x];
+				static_score += gameboard[y][x];
 			} else if (mark == -1) {
 				continue;
 			} else {
-				score -= gameboard[y][x];
+				static_score -= gameboard[y][x];
 			}
 		}
 	}
 	
-	// Frontier disk evaluation and Stable disk evaluation
-	disks_total = checkDisks(node);
-	score += disks_total;
-	
-	
-	// Move evaluation
-	my_moves = node.getState().getPossibleMoveCount(myIndex);
-	opp_moves = node.getState().getPossibleMoveCount(oppIndex);
-	
-	// Mark count evaluation
-	my_marks = field.getMarkCount(myIndex);
-	opp_marks = field.getMarkCount(oppIndex);
-	
-	if (my_marks == 0){
-		score -= 200;
-	}
-	if (opp_marks == 0){
-		score += 200;
-	}
-	
-	if((my_marks + opp_marks == 64) && (my_marks > opp_marks)){
-		score += 200;
-	}
-	
-	if((my_marks + opp_marks ==64) && (my_marks < opp_marks)){
-		score -= 200;
-	}
-	
-	if (my_marks + opp_marks < 25) {
-		// mobility
-		score += (my_marks - opp_marks) * 2;
-		if (my_moves > opp_moves){
-			score += 10;
-		}
-		if (my_moves < opp_moves){
-			score -= 10;
-		}
-		if (my_moves == 0){
-			score -= 40;
-		}
-		if (opp_moves == 0){
-			score += 40;
-		}
-	} else if ((my_marks + opp_marks > 25) && (my_marks + opp_marks < 50)){
-		score += (my_marks - opp_marks) * 3;
-		if (my_moves > opp_moves){
-			score += 10;
-		}
-		if (my_moves < opp_moves){
-			score -= 10;
-		}
-		if (my_moves == 0){
-			score -= 40;
-		}
-		if (opp_moves == 0){
-			score += 40;
-		}
-	} else {
-		// End game
-		score += 50 * (my_marks - opp_marks)/ (my_marks + opp_marks);
-	}
-	return score;
-  }
-
-boolean stableDisk(int x, int y, GameState field) {
+	return static_score;
+}
+  
+  
+  boolean stableDisk(int x, int y, GameState field) {
 	//Check if already stable
 	////////////////////////////////////////// EI tomi stable vektori kusee ja pahasti
-	if (stable.contains(new Slot(x,y))) {
+	/*if (stable.contains(new Slot(x,y))) {
 		return true;
 	}
 	
@@ -342,67 +435,11 @@ boolean stableDisk(int x, int y, GameState field) {
 	
 	// Stable disk
 	stable.add(new Slot(x,y));
+	*/
 	return true;
-}
-  
-int checkDisks(Node node) {
-	int my_frontier = 0;
-	int opp_frontier = 0;
-	int points = 0;
-	int x, y, mark;
-	GameState field = node.getState();
-	
-	for (x = 0; x < 8; x++) {
-		for (y = 0; y < 8; y++){
-			mark = field.getMarkAt(x, y);
-			if (mark == -1) { // Here is empty square
-				continue; 
-			} else { // Here we have mark
-				/*if (mark == myIndex){
-					if (stableDisk(x, y, field)) {
-						points += 25;
-					}
-				}*/
-				if (isFrontier(x, y, field)){
-					if (mark == myIndex) {
-						my_frontier += 1;
-					} else {
-						opp_frontier += 1;
-					}
-				}
-			}
-		}
 	}
-	points += ((opp_frontier - my_frontier) * 4);
-	return points;
-}
   
-  boolean isFrontier(int x, int y, GameState field){
-	  int i, k;
-	  int downx = -1, downy = -1;
-	  int upx = 1, upy = 1;
-	  
-	  if (x == 0) {
-		  downx = 0;
-	  } else if (x == 7) {
-		  upx = 0;
-	  }
-	  if (y == 0) {
-		  downy = 0;
-	  } else if (y == 7) {
-		  upy = 0;
-	  }
-	  
-	  for (i = downx; i < upx; i++) {
-			for (k = downy; k < upy; k++) {
-				if (field.getMarkAt(x+i, y+k) == -1) {
-					return true;
-				}
-			}
-		}
-	  return false;
-  }
-
+  
   void printTree(Node noodi, int dep, int mode, int dep_limit) // This function will print the tree
   {
 	  String field;
@@ -438,5 +475,6 @@ int checkDisks(Node node) {
 			  }
 		  }
 	  }
-  }
+  	}
 }
+  
