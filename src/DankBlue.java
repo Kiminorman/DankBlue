@@ -14,7 +14,6 @@ public class DankBlue implements ReversiAlgorithm {
   int myIndex;
   int oppIndex;
   Move selectedMove;
-  Vector stable = new Vector();
   double[][] gameboard = new double[][]{
 		  { 20, -3, 11,  8,  8, 11, -3, 20},
 		  { -3, -7, -4,  1,  1, -4, -7, -3},
@@ -401,48 +400,47 @@ public class DankBlue implements ReversiAlgorithm {
 	}
 	
 	return static_score;
-}
+  }
   
   
-  boolean stableDisk(int x, int y, GameState field) {
-	//Check if already stable
-	////////////////////////////////////////// EI tomi stable vektori kusee ja pahasti
-	/*if (stable.contains(new Slot(x,y))) {
-		return true;
-	}
+  private int stableDisk(GameState field) {
+	  // Check stable Disks
+	  int x, y;
+	  int my_stable = 0, opp_stable = 0;
+	  int mark;
+	  int cornerIndex;
+	  int xbound;
+	  
+	  // Start from upper corner
+	  y = 0;
+	  for (x = 0; x < 8; x++) {
+		  xbound = x; // save coordinate
+		  mark = field.getMarkAt(x, y);
+		  if (x == 0){
+			  if (mark != -1){
+				  cornerIndex = mark;
+			  } else { // Empty
+				  break;
+			  }
+		  }
+		  
+		  // Empty
+		  if (mark == -1) {
+			  break;
+		  } else if (mark != cornerIndex) { // not corner owner mark
+			  continue;
+		  }
+		  // Points for correct player
+		  if (cornerIndex == myIndex) {
+			  my_stable += 1;
+		  } else {
+			  opp_stable += 1;
+		  }
+	  }
 	
-	Slot check1, check2;
-
-	//left -> right
-	check1 = new Slot((x-1), y);
-	check2 = new Slot((x+1), y);
-	if (!((x == 0) || (x == 7) || stable.contains(check1) || stable.contains(check2))) {
-		return false;
-	}
-	// upleft -> downrigth
-	check1 = new Slot((x-1), (y+1));
-	check2 = new Slot((x+1), (y-1));
-	if (!((x == 0) || (x == 7) || (y == 0) || (y == 7) || stable.contains(check1) || stable.contains(check2))) {
-		return false;
-	}
-	// up -> down
-	check1 = new Slot(x, (y+1));
-	check2 = new Slot(x, (y-1));
-	if (!((y == 0) || (y== 7) || stable.contains(check1) || stable.contains(check2))) {
-		return false;
-	}
-	// downleft -> uprigth
-	check1 = new Slot((x+1), (y-1));
-	check2 = new Slot((x-1), (y+1));
-	if (!((x == 0) || (x == 7) || (y == 0) || (y == 7) || stable.contains(check1) || stable.contains(check2))) {
-		return false;
-	}
-	
-	// Stable disk
-	stable.add(new Slot(x,y));
-	*/
-	return true;
-	}
+	  return;
+  }
+  
   
   
   void printTree(Node noodi, int dep, int mode, int dep_limit) // This function will print the tree
