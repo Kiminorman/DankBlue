@@ -16,14 +16,14 @@ public class DankBlue implements ReversiAlgorithm {
   Move selectedMove;
   Vector stable = new Vector();
   double[][] gameboard = new double[][]{
-		  {  50, -15,  5, 3, 3,  5, -15,  50},
-		  { -15, -20,  3, 0, 0,  3, -20, -15},
-		  {   5,   3,  0, 0, 0,  0,   3,   5},
-		  {   3,   0,  0, 0, 0,  0,   0,   3},
-		  {   3,   0,  0, 0, 0,  0,   0,   3},
-		  {   5,   3,  0, 0, 0,  0,   3,   5},
-		  { -15, -20,  3, 0, 0,  3, -20, -15},
-		  {  50, -15,  5, 3, 3,  5, -15,  50}
+		  { 20, -3, 11,  8,  8, 11, -3, 20},
+		  { -3, -7, -4,  1,  1, -4, -7, -3},
+		  { 11, -4,  2,  2,  2,  2, -4, 11},
+	      {  8,  1,  2, -3, -3,  2,  1,  8},
+	      {  8,  1,  2, -3, -3,  2,  1,  8},
+	      { 11, -4,  2,  2,  2,  2, -4, 11},
+	      { -3, -7, -4,  1,  1, -4, -7, -3},
+	      { 20, -3, 11,  8,  8, 11, -3, 20},
   };
 
   public DankBlue() {} //the constructor
@@ -104,9 +104,11 @@ public class DankBlue implements ReversiAlgorithm {
       spreadScores(depth, root);
       
       // Print tree info
-      if (depth == 4) {
+      /*if (depth == 4) {
     	  printTree(root, 0, 0, 2);
-      }
+      }*/
+      
+      System.out.println(depth);
       
       // Select move
       if (moves.size() > 0) {
@@ -241,21 +243,27 @@ public class DankBlue implements ReversiAlgorithm {
 	// 4. Corner evaluation
 	// score += corner_evaluation(field, factor);
 	
+	// 5. Static evaluation
+	// score += static_evaluation(field);
+	
 	if (total_marks < 25) {
 		// Early game
 		score += move_evaluation(field, factor);				//2
 		score += frontier_evaluation(field, factor);			//3
 		score += corner_evaluation(field, factor);				//4
+		score += static_evaluation(field);						//5
 	} else if (total_marks < 50){
 		// Mid game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
 		score += move_evaluation(field, factor);				//2
 		score += frontier_evaluation(field, factor);			//3
 		score += corner_evaluation(field, factor);				//4
+		score += static_evaluation(field);						//5
 	} else {
 		// End game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
-		score += corner_evaluation(field, factor);
+		score += corner_evaluation(field, factor);				//4
+		score += static_evaluation(field);						//5
 	}
 	
 	return score;
@@ -386,9 +394,7 @@ public class DankBlue implements ReversiAlgorithm {
 			mark = field.getMarkAt(x, y);
 			if (mark == myIndex) {
 				static_score += gameboard[y][x];
-			} else if (mark == -1) {
-				continue;
-			} else {
+			} else if (mark == oppIndex) {
 				static_score -= gameboard[y][x];
 			}
 		}
