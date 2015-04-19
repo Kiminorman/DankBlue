@@ -107,8 +107,6 @@ public class DankBlue implements ReversiAlgorithm {
     	  printTree(root, 0, 0, 2);
       }*/
       
-      System.out.println(depth);
-      
       // Select move
       if (moves.size() > 0) {
     	  optimalNode = root.getOptimalChild();
@@ -245,12 +243,16 @@ public class DankBlue implements ReversiAlgorithm {
 	// 5. Static evaluation
 	// score += static_evaluation(field);
 	
+	// 6. Stable evaluation
+	// score += stable_evaluation(field, factor);
+	
 	if (total_marks < 25) {
 		// Early game
 		score += move_evaluation(field, factor);				//2
 		score += frontier_evaluation(field, factor);			//3
 		score += corner_evaluation(field, factor);				//4
 		score += static_evaluation(field);						//5
+		score += stable_evaluation(field, factor);				//6
 	} else if (total_marks < 50){
 		// Mid game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
@@ -258,11 +260,13 @@ public class DankBlue implements ReversiAlgorithm {
 		score += frontier_evaluation(field, factor);			//3
 		score += corner_evaluation(field, factor);				//4
 		score += static_evaluation(field);						//5
+		score += stable_evaluation(field, factor);				//6
 	} else {
 		// End game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
 		score += corner_evaluation(field, factor);				//4
 		score += static_evaluation(field);						//5
+		score += stable_evaluation(field, factor);				//6
 	}
 	
 	return score;
@@ -403,44 +407,110 @@ public class DankBlue implements ReversiAlgorithm {
   }
   
   
-  private int stableDisk(GameState field) {
+  private int stable_evaluation(GameState field, int factor) {
 	  // Check stable Disks
 	  int x, y;
+	  int xbound;
 	  int my_stable = 0, opp_stable = 0;
 	  int mark;
-	  int cornerIndex;
-	  int xbound;
+	  int stablescore = 0;
+	  int stablesToAdd = 0;
 	  
-	  // Start from upper corner
-	  y = 0;
-	  for (x = 0; x < 8; x++) {
-		  xbound = x; // save coordinate
-		  mark = field.getMarkAt(x, y);
-		  if (x == 0){
-			  if (mark != -1){
-				  cornerIndex = mark;
-			  } else { // Empty
-				  break;
+	  // Topleft corner
+	  mark = field.getMarkAt(0, 0);
+	  if (mark != -1) { // here is disk
+		  xbound = 8;
+		  for (y = 0; y < 8; y++) {
+			  for (x = 0; x < xbound; x++) {
+				  if (field.getMarkAt(x, y) == mark) {
+					  stablesToAdd += 1;
+				  } else {
+					  xbound = x - 1;
+					  break;
+				  }
 			  }
 		  }
-		  
-		  // Empty
-		  if (mark == -1) {
-			  break;
-		  } else if (mark != cornerIndex) { // not corner owner mark
-			  continue;
-		  }
-		  // Points for correct player
-		  if (cornerIndex == myIndex) {
-			  my_stable += 1;
-		  } else {
-			  opp_stable += 1;
+	  }
+	  if (mark == myIndex) {
+		  my_stable += stablesToAdd;
+	  } else {
+		  opp_stable += stablesToAdd;
+	  }
+	  stablesToAdd = 0;
+	  
+	  // Topright corner
+	  mark = field.getMarkAt(7, 0);
+	  if (mark != -1) {
+		  xbound = 0;
+		  for (y = 0; y < 8; y++) {
+			  for (x = 7; x > xbound; x--) {
+				  if (field.getMarkAt(x, y) == mark) {
+					  stablesToAdd += 1;
+				  } else {
+					  xbound = x + 1;
+					  break;
+				  }
+			  }
 		  }
 	  }
-	
-	  return;
+	  if (mark == myIndex) {
+		  my_stable += stablesToAdd;
+	  } else {
+		  opp_stable += stablesToAdd;
+	  }
+	  stablesToAdd = 0;
+	  
+	  // Bottomleft corner
+	  mark = field.getMarkAt(0, 7);
+	  if (mark != -1) {
+		  xbound = 8;
+		  for (y = 7; y > 0; y--) {
+			  for (x = 0; x < xbound; x++) {
+				  if (field.getMarkAt(x, y) == mark) {
+					  stablesToAdd += 1;
+				  } else {
+					  xbound = x - 1;
+					  break;
+				  }
+			  }
+		  }
+	  }
+	  if (mark == myIndex) {
+		  my_stable += stablesToAdd;
+	  } else {
+		  opp_stable += stablesToAdd;
+	  }
+	  stablesToAdd = 0;
+	  
+	  // Bottomright corner
+	  mark = field.getMarkAt(7, 7);
+	  if (mark != -1) {
+		  xbound = 0;
+		  for (y = 7; y > 0; y--) {
+			  for (x = 7; x > xbound; x--) {
+				  if (field.getMarkAt(x, y) == mark) {
+					  stablesToAdd += 1;
+				  } else {
+					  xbound = x + 1;
+					  break;
+				  }
+			  }
+		  }
+	  }
+	  if (mark == myIndex) {
+		  my_stable += stablesToAdd;
+	  } else {
+		  opp_stable += stablesToAdd;
+	  }
+	  stablesToAdd = 0;
+	  
+	  // Calc total score
+	  if (my_stable + opp_stable != 0){
+		  stablescore = (factor * ((my_stable - opp_stable) / (my_stable + opp_stable)));
+	  }
+	  
+	  return stablescore;
   }
-  
   
   
   void printTree(Node noodi, int dep, int mode, int dep_limit) // This function will print the tree
