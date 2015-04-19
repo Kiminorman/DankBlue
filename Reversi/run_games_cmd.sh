@@ -3,9 +3,9 @@
 echo ---------------------------------------------------------------------------
 echo Running command line games for the Artificial Intelligence course exercise.
 echo ---------------------------------------------------------------------------
-./run_cmd.sh CheapBlue LousyBlue 1
-./run_cmd.sh LousyBlue CheapBlue 1
-./run_cmd.sh CheapBlue LousyBlue 10
-./run_cmd.sh LousyBlue CheapBlue 10
+./run_cmd.sh DankBlue LousyBlue 1
+./run_cmd.sh LousyBlue DankBlue 1
+./run_cmd.sh DankBlue LousyBlue 10
+./run_cmd.sh LousyBlue DankBlue 10
 
 
