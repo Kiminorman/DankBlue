@@ -324,7 +324,7 @@ int frontierDisk(Node node) {
 			}
 		}
 	}
-	points = (my_frontier - opp_frontier) * 5;
+	points = (opp_frontier - my_frontier) * 5;
 	return points;
 }
   
