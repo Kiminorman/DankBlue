@@ -250,17 +250,17 @@ public class DankBlue implements ReversiAlgorithm {
 		// Early game
 		score += move_evaluation(field, factor);				//2
 		score += frontier_evaluation(field, factor);			//3
-		score += corner_evaluation(field, factor);				//4
+		score += 2*(corner_evaluation(field, factor));				//4
 		score += static_evaluation(field);						//5
-		score += stable_evaluation(field, factor);				//6
+		score += 5 * (stable_evaluation(field, factor));				//6
 	} else if (total_marks < 50){
 		// Mid game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
 		score += move_evaluation(field, factor);				//2
 		score += frontier_evaluation(field, factor);			//3
-		score += corner_evaluation(field, factor);				//4
+		score += 2*(corner_evaluation(field, factor));				//4
 		score += static_evaluation(field);						//5
-		score += stable_evaluation(field, factor);				//6
+		score += 5 * (stable_evaluation(field, factor));				//6
 	} else {
 		// End game
 		score += mark_evaluation(my_marks, opp_marks, factor);	//1
