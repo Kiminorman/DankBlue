@@ -4,8 +4,8 @@ import java.util.Vector;
 
 public class DankBlue implements ReversiAlgorithm {
       // Constants
-  private final static int DEPTH_LIMIT = 8;// Just an example value.
-
+  private final static int DEPTH_LIMIT = 5;// Just an example value.
+  
   // Variables
   boolean initialized;
   volatile boolean running; // Note: volatile for synchronization issues.
@@ -15,14 +15,14 @@ public class DankBlue implements ReversiAlgorithm {
   int oppIndex;
   Move selectedMove;
   double[][] gameboard = new double[][]{
-		  { 20, -3, 11,  8,  8, 11, -3, 20},
-		  { -3, -7, -4,  1,  1, -4, -7, -3},
+		  { 20, -7, 11,  8,  8, 11, -7, 20},
+		  { -7, -7, -4,  1,  1, -4, -7, -7},
 		  { 11, -4,  2,  2,  2,  2, -4, 11},
 	      {  8,  1,  2, -3, -3,  2,  1,  8},
 	      {  8,  1,  2, -3, -3,  2,  1,  8},
 	      { 11, -4,  2,  2,  2,  2, -4, 11},
-	      { -3, -7, -4,  1,  1, -4, -7, -3},
-	      { 20, -3, 11,  8,  8, 11, -3, 20},
+	      { -7, -7, -4,  1,  1, -4, -7, -7},
+	      { 20, -7, 11,  8,  8, 11, -7, 20},
   };
 
   public DankBlue() {} //the constructor
@@ -41,6 +41,7 @@ public class DankBlue implements ReversiAlgorithm {
       oppIndex = (playerIndex ^ 1);
       controller = game;
       initialized = true;
+      
   }
 
   public String getName() { return "Dankblue"; }
@@ -193,6 +194,7 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   private void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
+  
   {
 	  if (running == false) {
 		  return;
@@ -249,24 +251,20 @@ public class DankBlue implements ReversiAlgorithm {
 	if (total_marks < 25) {
 		// Early game
 		score += (move_evaluation(field, factor));				//2
-		score += frontier_evaluation(field, factor);			//3
-		score += (corner_evaluation(field, factor));			//4
-		score += static_evaluation(field);						//5
+		score += 0.5*frontier_evaluation(field, factor);		//3		
+		score += 10*static_evaluation(field);					//5
 		score += (stable_evaluation(field, factor));			//6
 	} else if (total_marks < 55){
 		// Mid game
-		score += mark_evaluation(my_marks, opp_marks, factor);	//1
 		score += (move_evaluation(field, factor));				//2
-		score += frontier_evaluation(field, factor);			//3
-		score += (corner_evaluation(field, factor));			//4
-		score += static_evaluation(field);						//5
+		score += 0.5*frontier_evaluation(field, factor);		//3
+		score += 10*static_evaluation(field);					//5
 		score += (stable_evaluation(field, factor));			//6
 	} else {
 		// End game
-		score += mark_evaluation(my_marks, opp_marks, factor);	//1
-		//score += 10 *(corner_evaluation(field, factor));		//4
-		//score += static_evaluation(field);					//5
-		//score += 8 * (stable_evaluation(field, factor));		//6
+		score += 5*(mark_evaluation(my_marks, opp_marks, factor));	//1
+		score += 10*static_evaluation(field);						//5
+		score += (stable_evaluation(field, factor));				//6
 	}
 	
 	return score;
