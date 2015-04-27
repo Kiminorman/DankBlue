@@ -5,7 +5,7 @@ import java.util.Vector;
 public class DankBlue implements ReversiAlgorithm {
       // Constants
   private final static int DEPTH_LIMIT = 5;// Just an example value.
-  
+
   // Variables
   boolean initialized;
   volatile boolean running; // Note: volatile for synchronization issues.
