@@ -136,7 +136,7 @@ public class DankBlue implements ReversiAlgorithm {
 		  Vector moves = node.getState().getPossibleMoves(pl_index);
 		  counter++;
 		  if ((depth == depth_lim) || (moves.size() == 0)) {
-			  // Now we are at leaf node
+			  // Now we are at a leaf node
 			  // here comes the scoring
 			  double score = calc_scores(node);
 			  node.setScore(score);
@@ -162,6 +162,7 @@ public class DankBlue implements ReversiAlgorithm {
 
   
   private void spreadScores(int depth, Node root) {
+	  // This function will use propagateScore to give points for every node
 	  boolean maximize;
 	  Vector childparent = new Vector();
 	  int i;
@@ -187,14 +188,13 @@ public class DankBlue implements ReversiAlgorithm {
   }
   
   
-  private void find_leaf_parents(Node noodi, Vector childparent) // This function will find nodes to propagate score
-  
-  {
+  private void find_leaf_parents(Node noodi, Vector childparent) { 
+  // This function will find nodes to propagate score
 	  if (running == false) {
 		  return;
 	  }
 	  Vector childit = noodi.getChildren(); // Take children
-	  int childCount = childit.size();		// Calc number of children
+	  int childCount = childit.size();		// Take number of children
 	  
 	  if (childCount == 0) {
 		  // leaf node
@@ -293,7 +293,7 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   private double frontier_evaluation(GameState field, int factor) {
-		// Goes trough all disks on the field and calculates frontier disks score
+		// 3. Frontier evaluation. Goes trough all disks on the field and calculates frontier disks score
 		int my_frontier = 0, opp_frontier = 0, frontier_score = 0;
 		int x, y, mark;
 		
@@ -321,6 +321,7 @@ public class DankBlue implements ReversiAlgorithm {
 		
 		return frontier_score;
 	}
+  
   boolean isFrontier(int x, int y, GameState field){
 	  // Checks if the given disk is frontier disk
 	  int i, k;
@@ -353,7 +354,7 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   private double corner_evaluation(GameState field, int factor) {
-	// Calculates corner points, values having more corners than the opponent
+	// 4. Corner evaluation. Calculates corner points, values having more corners than the opponent
 	double my_corner = 0, opp_corner = 0, corner_points = 0;
 	int i;
 	double[] corners = new double[4];
@@ -380,7 +381,7 @@ public class DankBlue implements ReversiAlgorithm {
 
   
   private int static_evaluation(GameState field){
-	//Static evaluation that gives a score for the gamestate based on the positioning of own marks.
+	// 5. Static evaluation that gives a score for the gamestate based on the positioning of own marks.
 	int mark;
 	int x, y;
 	int static_score = 0;
@@ -402,7 +403,7 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   private int stable_evaluation(GameState field, int factor) {
-	  // Check stable Disks
+	  // 6. Stable evaluation.
 	  int x, y;
 	  int xbound;
 	  int my_stable = 0, opp_stable = 0;
