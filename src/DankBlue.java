@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class DankBlue implements ReversiAlgorithm {
       // Constants
-  private final static int DEPTH_LIMIT = 5;
+  private final static int DEPTH_LIMIT = 5; //Maximum depth of the tree
 
   // Variables
   boolean initialized;
@@ -14,6 +14,7 @@ public class DankBlue implements ReversiAlgorithm {
   int myIndex;
   int oppIndex;
   Move selectedMove;
+  //Representation of game board with evaluated positions for static evaluation
   double[][] gameboard = new double[][]{
 		  { 20, -7, 11,  8,  8, 11, -7, 20},
 		  { -7, -7, -4,  1,  1, -4, -7, -7},
@@ -65,7 +66,6 @@ public class DankBlue implements ReversiAlgorithm {
           // Check that there's a new move available.
           if (newMove != null)
               selectedMove = newMove;
-          //System.out.println(currentDepth);
       }
   
       if (running) // Make a move if there is still time left.
@@ -103,8 +103,8 @@ public class DankBlue implements ReversiAlgorithm {
       // Propagate score with propagateScore method
       spreadScores(depth, root);
       
-      // Print tree info
-      /*if (depth == 4) {
+      // Print tree info, for research purposes. Not used currently
+      /*if (depth == 5) {
     	  printTree(root, 0, 0, 2);
       }*/
       
@@ -112,12 +112,6 @@ public class DankBlue implements ReversiAlgorithm {
       if (moves.size() > 0) {
     	  optimalNode = root.getOptimalChild();
           optimalMove = optimalNode.getMove(); // Optimal child
-          
-          /*//print debug info
-          System.out.println(moves);
-          System.out.println("DankBlue chose move: " + optimalMove);
-          String field = root.getState().toString();
-		  System.out.println(field);*/
       } else {
     	  System.out.println("No moves to do!");
     	  optimalMove = null;
@@ -127,13 +121,13 @@ public class DankBlue implements ReversiAlgorithm {
   
 
   void createTree(int depth, int depth_lim, Vector nodes, int pl_index) {
-	  // Makes tree with breadth first search to depth depth_lim
+	  // Makes a tree with breadth first search to depth depth_lim
 	  int i = 0;
 	  int counter = 0;
 	  Vector children = new Vector();
 	  Node node;
 	  
-	  // This loop hecks children for every node at certain depth
+	  // This loop checks children for every node at certain depth
 	  while (!nodes.isEmpty()) {
 		  if (running == false){
 			  return;
@@ -229,7 +223,8 @@ public class DankBlue implements ReversiAlgorithm {
 	my_marks = field.getMarkCount(myIndex);
 	opp_marks = field.getMarkCount(oppIndex);
 	total_marks = my_marks + opp_marks;
-	
+
+	//These are listed here to make changing evaluation simple
 	// 1. Mark count evaluation
 	// score += mark_evaluation(my_marks, opp_marks, factor);
 	
@@ -252,19 +247,21 @@ public class DankBlue implements ReversiAlgorithm {
 		// Early game
 		score += (move_evaluation(field, factor));				//2
 		score += 0.5*frontier_evaluation(field, factor);		//3		
-		score += 10*static_evaluation(field);					//5
-		score += (stable_evaluation(field, factor));			//6
+		score += 100*static_evaluation(field);					//5
+		score += 2*corner_evaluation(field, factor);			//4
+		score += stable_evaluation(field, factor);				//6
 	} else if (total_marks < 55){
 		// Mid game
 		score += (move_evaluation(field, factor));				//2
 		score += 0.5*frontier_evaluation(field, factor);		//3
-		score += 10*static_evaluation(field);					//5
-		score += (stable_evaluation(field, factor));			//6
+		score += corner_evaluation(field, factor);			    //4
+		score += 100*static_evaluation(field);					//5
+		score += stable_evaluation(field, factor);				//6
 	} else {
 		// End game
 		score += 5*(mark_evaluation(my_marks, opp_marks, factor));	//1
-		score += 10*static_evaluation(field);						//5
-		score += (stable_evaluation(field, factor));				//6
+		score += 100*static_evaluation(field);						//5
+		score += stable_evaluation(field, factor);					//6
 	}
 	
 	return score;
@@ -272,7 +269,7 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   private double mark_evaluation(double my_marks, double opp_marks, int factor) {
-	  // 1. Mark count evaluation
+	  // 1. Mark count evaluation, values having more marks than the opponent
 	  double mark_score;
 	  
 	  mark_score = (factor * ((my_marks - opp_marks) / (my_marks + opp_marks)));
@@ -282,7 +279,7 @@ public class DankBlue implements ReversiAlgorithm {
 
   
   private double move_evaluation(GameState field, int factor) {
-	  // 2. Move count evaluation
+	  // 2. Move count evaluation, values having more moves to do than the opponent
 	  double my_moves, opp_moves, move_score = 0;
 	  
 	  my_moves = field.getPossibleMoveCount(myIndex);
@@ -356,7 +353,7 @@ public class DankBlue implements ReversiAlgorithm {
   
   
   private double corner_evaluation(GameState field, int factor) {
-	// Calculates corner points
+	// Calculates corner points, values having more corners than the opponent
 	double my_corner = 0, opp_corner = 0, corner_points = 0;
 	int i;
 	double[] corners = new double[4];
@@ -383,6 +380,7 @@ public class DankBlue implements ReversiAlgorithm {
 
   
   private int static_evaluation(GameState field){
+	//Static evaluation that gives a score for the gamestate based on the positioning of own marks.
 	int mark;
 	int x, y;
 	int static_score = 0;
@@ -509,7 +507,8 @@ public class DankBlue implements ReversiAlgorithm {
   }
   
   
-  void printTree(Node noodi, int dep, int mode, int dep_limit) // This function will print the tree
+  void printTree(Node noodi, int dep, int mode, int dep_limit) 
+  // This function will print the tree for research purposes. Currently not used
   {
 	  String field;
 	  String move_string;
